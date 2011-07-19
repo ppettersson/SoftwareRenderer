@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="SoftwareRenderer">
+      <UniqueIdentifier>{8db3fcca-aff4-47b0-aba1-6eb3f26d300f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TinyPTC">
+      <UniqueIdentifier>{bfd98e94-4597-43ad-a85d-228c0fbe56e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoftwareRenderer\FrameBuffer">
+      <UniqueIdentifier>{2690325f-4c20-4379-a1d1-f08f9d3051bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoftwareRenderer\Misc">
+      <UniqueIdentifier>{008450f4-529c-415d-a76d-364cd38d9cd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoftwareRenderer\ImagePrimitives">
+      <UniqueIdentifier>{e7632b48-29ea-448b-8982-42f16e427fee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoftwareRenderer\DrawPrimitives">
+      <UniqueIdentifier>{104d365d-d490-494d-88b8-a83d1e45aea4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SoftwareRenderer.cpp">
+      <Filter>SoftwareRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TinyPTC\convert.c">
+      <Filter>TinyPTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TinyPTC\ddraw.c">
+      <Filter>TinyPTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TinyPTC\gdi.c">
+      <Filter>TinyPTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TinyPTC\tinyptc.c">
+      <Filter>TinyPTC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TinyPTC\vfw.c">
+      <Filter>TinyPTC</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>SoftwareRenderer\FrameBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Misc.cpp">
+      <Filter>SoftwareRenderer\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawLine.cpp">
+      <Filter>SoftwareRenderer\DrawPrimitives</Filter>
+    </ClCompile>
+    <ClCompile Include="StretchBlit.cpp">
+      <Filter>SoftwareRenderer\ImagePrimitives</Filter>
+    </ClCompile>
+    <ClCompile Include="ScanConvert.cpp">
+      <Filter>SoftwareRenderer\DrawPrimitives</Filter>
+    </ClCompile>
+    <ClCompile Include="CrossFade.cpp">
+      <Filter>SoftwareRenderer\ImagePrimitives</Filter>
+    </ClCompile>
+    <ClCompile Include="Blend.cpp">
+      <Filter>SoftwareRenderer\ImagePrimitives</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawString.cpp">
+      <Filter>SoftwareRenderer\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Color.cpp">
+      <Filter>SoftwareRenderer\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>SoftwareRenderer\ImagePrimitives</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawPolygon.cpp">
+      <Filter>SoftwareRenderer\DrawPrimitives</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawTriangle.cpp">
+      <Filter>SoftwareRenderer\DrawPrimitives</Filter>
+    </ClCompile>
+    <ClCompile Include="CPU.cpp">
+      <Filter>SoftwareRenderer\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Blend_mmx_inline.cpp">
+      <Filter>SoftwareRenderer\ImagePrimitives</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SoftwareRenderer.h">
+      <Filter>SoftwareRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TinyPTC\convert.h">
+      <Filter>TinyPTC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TinyPTC\mmx.h">
+      <Filter>TinyPTC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TinyPTC\tinyptc.h">
+      <Filter>TinyPTC</Filter>
+    </ClInclude>
+    <ClInclude Include="ScanConvert.h">
+      <Filter>SoftwareRenderer\DrawPrimitives</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpolator.h">
+      <Filter>SoftwareRenderer\DrawPrimitives</Filter>
+    </ClInclude>
+    <ClInclude Include="CPU.h">
+      <Filter>SoftwareRenderer\Misc</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\TinyPTC\mmx.asm">
+      <Filter>TinyPTC</Filter>
+    </None>
+    <None Include="ToDo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <YASM Include="Blend_mmx.asm">
+      <Filter>SoftwareRenderer\ImagePrimitives</Filter>
+    </YASM>
+  </ItemGroup>
+</Project>

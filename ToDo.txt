@@ -1,0 +1,17 @@
+- Use function pointers and a startup function that checks CPU type and assigns the right functions.
+- Use NASM/YASM/ (MASM?)
+    syntax highlighting?
+    debugging?
+
+    go through the asm file and take advantage of macros etc (debugging doesn't work with macros...)
+    read through nasm and yasm manuals properly
+
+- Go through the blend modes and verify that they are actually correct, seems to be some issues with some of them.
+- Separate utility library
+- Separate test library
+- Rewrite TinyPTC to own code
+  - Understand all the convert code first
+  - Make Linux and Mac versions.
+    - Android / iOS versions?
+- 64 bit mode?
+- Constify the code.
