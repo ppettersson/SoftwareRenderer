@@ -5,6 +5,14 @@
 
 #define USE_MMX_ASM
 
+
+// -- Compiler warnings -------------------------------------------------------
+
+#ifdef _MSC_VER
+#pragma warning(disable : 4100)   // unreferenced formal parameter
+#define _CRT_SECURE_NO_WARNINGS   // This function or variable may be unsafe
+#endif
+
 // -- Types -------------------------------------------------------------------
 
 typedef unsigned char   byte;
