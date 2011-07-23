@@ -1,5 +1,3 @@
-bits 32
-
 ; Exported functions
 ;global _BlendNormal1_MMX
 ;global _BlendMultiply1_MMX
@@ -24,8 +22,8 @@ section .text
 align 16
 _BlendNormal_MMX:
   ; Set up stack frame.
-  push ebp
-  mov ebp,esp
+  push        ebp
+  mov         ebp,esp
 
   ; Save away all registers, ToDo: optimize this by checking which ones are actually used...
   pushad
@@ -216,8 +214,8 @@ BlendNormal_MMX_Done:
 align 16
 _BlendMultiply_MMX:
   ; Set up stack frame.
-  push ebp
-  mov ebp,esp
+  push        ebp
+  mov         ebp,esp
 
   ; Save away all registers, ToDo: optimize this by checking which ones are actually used...
   pushad
@@ -300,8 +298,8 @@ BlendMultiply_MMX_Done:
 align 16
 _BlendAdditive_MMX:
   ; Set up stack frame.
-  push ebp
-  mov ebp,esp
+  push        ebp
+  mov         ebp,esp
 
   ; Save away all registers, ToDo: optimize this by checking which ones are actually used...
   pushad
@@ -360,8 +358,8 @@ BlendAdditive_MMX_Done:
 align 16
 _BlendSubtractive_MMX:
   ; Set up stack frame.
-  push ebp
-  mov ebp,esp
+  push        ebp
+  mov         ebp, esp
 
   ; Save away all registers, ToDo: optimize this by checking which ones are actually used...
   pushad
