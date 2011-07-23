@@ -9,7 +9,6 @@
 
 - Go through the blend modes and verify that they are actually correct, seems to be some issues with some of them.
 - Separate utility library
-- Separate test library
 - Rewrite TinyPTC to own code
   - Understand all the convert code first
   - Make Linux and Mac versions.

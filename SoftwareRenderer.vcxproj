@@ -108,6 +108,7 @@
     <ClCompile Include="DrawTriangle.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Misc.cpp" />
     <ClCompile Include="ScanConvert.cpp" />
     <ClCompile Include="SoftwareRenderer.cpp" />
@@ -118,15 +119,20 @@
     <ClCompile Include="..\TinyPTC\tinyptc.c" />
     <ClCompile Include="..\TinyPTC\vfw.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="TestSuite.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPU.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Interpolator.h" />
     <ClInclude Include="ScanConvert.h" />
     <ClInclude Include="SoftwareRenderer.h" />
     <ClInclude Include="..\TinyPTC\convert.h" />
     <ClInclude Include="..\TinyPTC\mmx.h" />
     <ClInclude Include="..\TinyPTC\tinyptc.h" />
+    <ClInclude Include="TestSuite.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\TinyPTC\mmx.asm" />
