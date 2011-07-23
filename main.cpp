@@ -1,11 +1,9 @@
 #include "SoftwareRenderer.h"
+#include "Timer.h"
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <windows.h>
-#include <mmsystem.h>
-
-#pragma comment(lib, "winmm.lib")
 
 extern "C" { extern HWND wnd; }
 
@@ -268,22 +266,8 @@ void TestStretchBlit(real timePassed)
 
 int main(int argc, char **argv)
 {
-  Init(1024, 768);
-
-  {
-    //dword src = 0xaabbccdd;
-    //dword dst = 0x11223344;
-    //dword result = (*BlendScreen1)(src, dst);
-    //int bp = 0;
-
-    dword a = 0x11223344;
-    dword b = 0x11111111;
-
-    extern dword BlendAdditive1_C(dword a, dword b);
-    dword result = BlendAdditive1_C(a, b);
-
-    int bp = 0;
-  }
+  if (!Init(1024, 768))
+    return -1;
 
   texture1 = LoadTGA("test.tga");   // Lionhead
   texture2 = LoadTGA("test2.tga");  // Wooden wall
@@ -310,34 +294,11 @@ int main(int argc, char **argv)
   //texture3.Resize(512, 512);
   //texture4.Resize(512, 512);
 
-  timeBeginPeriod(1);
-  DWORD startTime = timeGetTime();
-  DWORD lastTime  = startTime;
-
-  DWORD fpsStartTime = startTime;
-  DWORD fpsNumFrames = 0;
-
-  int fpsAverage = 0;
+  InitTimer();
 
   for (;;)
   {
-    // Basic frame rate counter.
-    DWORD currentTime = timeGetTime();
-
-    real fps = 1000.0f / (currentTime - lastTime);
-    lastTime = currentTime;
-
-    real timePassed = (currentTime - startTime) / 1000.0f;
-
-    fpsNumFrames++;
-    if ((currentTime - fpsStartTime) > 1000)
-    {
-      fpsAverage = (int)fpsNumFrames;
-
-      fpsStartTime = currentTime;
-      fpsNumFrames = 0;
-    }
-    
+    UpdateTimer();    
 
     char msg[256];
     sprintf_s(msg, 256, "SoftwareRenderer - [FPS = %d | %.1f]", fpsAverage, fps);

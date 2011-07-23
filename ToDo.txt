@@ -2,6 +2,7 @@
 - Use NASM/YASM/ (MASM?)
     syntax highlighting?
     debugging?
+    optimization in release mode?
 
     go through the asm file and take advantage of macros etc (debugging doesn't work with macros...)
     read through nasm and yasm manuals properly
