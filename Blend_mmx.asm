@@ -16,17 +16,31 @@ section .data
 ; Code
 section .text
 
+; Function helper macros
+%macro prologue 0
+  ; Set up stack frame.
+  push        ebp
+  mov         ebp, esp
+
+  ; Save away all registers.
+  pushad
+%endmacro
+
+%macro epilogue 0
+  ; Restore all clobbered registers.
+  popad
+
+  ; Restore stack frame and return to callee.
+  pop ebp
+  ret
+%endmacro
+
 
 ; void BlendNormal_MMX(dword *src, dword *dst, dword num)
 ; {
 align 16
 _BlendNormal_MMX:
-  ; Set up stack frame.
-  push        ebp
-  mov         ebp,esp
-
-  ; Save away all registers, ToDo: optimize this by checking which ones are actually used...
-  pushad
+  prologue
 
   ; Get the arguments into registers.
   mov         esi, [ebp + 8]  ; src
@@ -200,12 +214,7 @@ _BlendNormal_MMX:
 
 BlendNormal_MMX_Done:
 
-  ; Restore all clobbered registers.
-  popad
-
-  ; Restore stack frame and return to callee.
-  pop ebp
-  ret
+  epilogue
 ; }
 
 
@@ -213,12 +222,7 @@ BlendNormal_MMX_Done:
 ; {
 align 16
 _BlendMultiply_MMX:
-  ; Set up stack frame.
-  push        ebp
-  mov         ebp,esp
-
-  ; Save away all registers, ToDo: optimize this by checking which ones are actually used...
-  pushad
+  prologue
 
   ; Get the arguments into registers.
   mov         esi, [ebp + 8]  ; src
@@ -283,13 +287,7 @@ _BlendMultiply_MMX:
   movd        [edi], mm0
 
 BlendMultiply_MMX_Done:
-
-  ; Restore all clobbered registers.
-  popad
-
-  ; Restore stack frame and return to callee.
-  pop ebp
-  ret
+  epilogue
 ; }
 
 
@@ -297,12 +295,7 @@ BlendMultiply_MMX_Done:
 ; {
 align 16
 _BlendAdditive_MMX:
-  ; Set up stack frame.
-  push        ebp
-  mov         ebp,esp
-
-  ; Save away all registers, ToDo: optimize this by checking which ones are actually used...
-  pushad
+  prologue
 
   ; Get the arguments into registers.
   mov         esi, [ebp + 8]  ; src
@@ -343,13 +336,7 @@ _BlendAdditive_MMX:
   movd        [edi], mm0
 
 BlendAdditive_MMX_Done:
-
-  ; Restore all clobbered registers.
-  popad
-
-  ; Restore stack frame and return to callee.
-  pop ebp
-  ret
+  epilogue
 ; }
 
 
@@ -357,12 +344,7 @@ BlendAdditive_MMX_Done:
 ; {
 align 16
 _BlendSubtractive_MMX:
-  ; Set up stack frame.
-  push        ebp
-  mov         ebp, esp
-
-  ; Save away all registers, ToDo: optimize this by checking which ones are actually used...
-  pushad
+  prologue
 
   ; Get the arguments into registers.
   mov         esi, [ebp + 8]  ; src
@@ -403,11 +385,5 @@ _BlendSubtractive_MMX:
   movd        [edi], mm0
 
 BlendSubtractive_MMX_Done:
-
-  ; Restore all clobbered registers.
-  popad
-
-  ; Restore stack frame and return to callee.
-  pop ebp
-  ret
+  epilogue
 ; }

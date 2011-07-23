@@ -500,6 +500,6 @@ void BlendSubtractive_MMX(dword *src, dword *dst, dword num)
   Done:
   }
 }
-#endif 0
+#endif // 0
 
 #endif
