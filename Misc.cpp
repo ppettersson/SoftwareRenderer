@@ -1,7 +1,7 @@
 #include "SoftwareRenderer.h"
 #include <memory.h>
 
-#ifdef USE_MMX_ASM
+#ifdef USE_INLINE_ASM
 
 void MemCpy(void *dst, const void *src, size_t count)
 {
@@ -94,4 +94,4 @@ L_set_loop:
   }
 }
 
-#endif // USE_MMX_ASM
+#endif // USE_INLINE_ASM

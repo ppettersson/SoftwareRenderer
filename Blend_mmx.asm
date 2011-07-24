@@ -1,16 +1,13 @@
 ; Exported functions
-;global _BlendNormal1_MMX
-;global _BlendMultiply1_MMX
-;global _BlendAdditive1_MMX
-;global _BlendSubtractive_MMX
+global _BlendNormal1_MMX
+global _BlendMultiply1_MMX
+global _BlendAdditive1_MMX
+global _BlendSubtractive1_MMX
+global _BlendScreen1_MMX
 global _BlendNormal_MMX
 global _BlendMultiply_MMX
 global _BlendAdditive_MMX
 global _BlendSubtractive_MMX
-
-
-; Variables
-section .data
 
 
 ; Code
@@ -31,13 +28,200 @@ section .text
   popad
 
   ; Restore stack frame and return to callee.
-  pop ebp
+  pop         ebp
   ret
 %endmacro
 
 
+; Arg1 * alpha + Arg2 * (1 - alpha)
+;
+; dword BlendNormal1_MMX(dword src, dword dst)
+align 16
+_BlendNormal1_MMX:
+  ; Set up stack frame.
+  push        ebp
+  mov         ebp, esp
+
+  ; Save away registers.
+  push        ebx
+
+  pxor        mm0, mm0          ; zero
+
+  ; Unpack source pixel to a word per component.
+  movd        mm1, [ebp + 8]    ; src
+  punpcklbw   mm1, mm0
+
+  ; Unpack destination pixel to a word per component.
+  movd        mm2, [ebp + 12]   ; dst
+  punpcklbw   mm2, mm0
+
+  ; Extract the alpha value in the source ARGB pixel and expand it into all four channels.
+  ; src_alpha  = src & 0xff000000
+  ; src_alpha |= src_alpha >> 8
+  ; src_alpha |= src_alpha >> 16
+  mov         eax, [ebp + 8]    ; src
+  and         eax, 0xff000000   ; mask off RGB so we only have the alpha. eax = AA000000
+  mov         ebx, eax
+  shr         ebx, 8            ; ebx = 00AA0000
+  or          eax, ebx          ; eax = AAAA0000
+  mov         ebx, eax
+  shr         ebx, 16           ; ebx = 0000AAAA
+  or          eax, ebx          ; eax = AAAAAAAA
+
+  movd        mm3, eax          ; mm3 = source alpha
+
+  ; Unpack one minus source alpha in all components to words.
+  pcmpeqw     mm4, mm4          ; mm4 = ff ff ff ff ff ff ff ff
+  psubusb     mm4, mm3          ; mm4 = 1 - source alpha
+
+  ; Unpack the source alpha and (1 - source alpha) to words.
+  punpcklbw   mm3, mm0
+  punpcklbw   mm4, mm0
+
+  ; mm1 = source pixel * source alpha
+  pmullw      mm1, mm3
+  psrlw       mm1, 8
+
+  ; mm2 = destination pixel * (1 - source alpha)
+  pmullw      mm2, mm4
+  psrlw       mm2, 8
+
+  ; Add the source and destination together.
+  paddusw     mm1, mm2
+
+  ; Pack it again.
+  packuswb    mm1, mm0
+
+  ; Store the result in eax.
+  movd        eax, mm1
+
+  ; Restore clobbered register.
+  pop         ebx
+
+  ; Restore stack frame and return to callee.
+  pop         ebp
+  ret
+
+
+; Arg1 * Arg2
+;
+; dword BlendMultiply1_MMX(dword src, dword dst)
+align 16
+_BlendMultiply1_MMX:
+  ; Set up stack frame.
+  push        ebp
+  mov         ebp, esp
+
+  movd        mm0, [ebp + 8]  ; src
+  movd        mm1, [ebp + 12] ; dst
+
+  pxor        mm7, mm7    ; zero
+
+  punpcklbw   mm0, mm7    ; expand to words per component
+  punpcklbw   mm1, mm7
+
+  pmullw      mm0, mm1    ; multiply per (word) component.
+  psrlw       mm0, 8      ; shift down to the lower 8 bits in each word.
+
+  packuswb    mm0, mm7    ; pack it again
+
+  ; Store the result in eax.
+  movd        eax, mm0
+
+  ; Restore stack frame and return to callee.
+  pop         ebp
+  ret
+
+
+; Arg1 + Arg2
+;
+; dword BlendAdditive1_MMX(dword src, dword dst)
+align 16
+_BlendAdditive1_MMX:
+  ; Set up stack frame.
+  push        ebp
+  mov         ebp, esp
+
+  ; Load up the source and destination operands.
+  movd        mm0, [ebp + 8]
+  movd        mm1, [ebp + 12]
+
+  ; Additive blend with saturation.
+  paddusb     mm0, mm1
+
+  ; Store the result in eax.
+  movd        eax, mm0
+
+  ; Restore stack frame and return to callee.
+  pop         ebp
+  ret
+
+
+; Arg1 - Arg2
+;
+; dword BlendSubtractive1_MMX(dword src, dword dst)
+align 16
+_BlendSubtractive1_MMX:
+  ; Set up stack frame.
+  push        ebp
+  mov         ebp, esp
+
+  ; Load up the source and destination operands.
+  movd        mm0, [ebp + 8]
+  movd        mm1, [ebp + 12]
+
+  ; Subtractive blend with saturation.
+  psubusb     mm0, mm1
+
+  ; Store the result in eax.
+  movd        eax, mm0
+
+  ; Restore stack frame and return to callee.
+  pop         ebp
+  ret
+
+
+; Arg1 + Arg2 - Arg1 * Arg2
+;
+; dword BlendScreen1_MMX(dword src, dword dst)
+align 16
+_BlendScreen1_MMX:
+  ; Set up stack frame.
+  push        ebp
+  mov         ebp, esp
+
+  ; mm0 = zero
+  pxor        mm0, mm0
+
+  ; Get the src and dst pixels and expand them to words to avoid saturation when adding.
+  movd        mm1, [ebp + 8]  ; src
+  punpcklbw   mm1, mm0
+  movd        mm2, [ebp + 12] ; dst
+  punpcklbw   mm2, mm0
+
+  ; mm3 = src + dst
+  movq        mm3, mm1
+  paddusw     mm3, mm2
+
+  ; Multiply them together and shift the result back into the lower bytes.
+  pmullw      mm1, mm2
+  psrlw       mm1, 8
+
+  ; mm3 = (src + dst) - (src * dst)
+  psubusb     mm3, mm1
+
+  ; Pack them back into bytes.
+  packuswb    mm3, mm0
+
+  ; Store the result in eax
+  movd        eax, mm3
+
+  ; Restore stack frame and return to callee.
+  pop         ebp
+  ret
+
+
 ; void BlendNormal_MMX(dword *src, dword *dst, dword num)
-; {
 align 16
 _BlendNormal_MMX:
   prologue
@@ -215,11 +399,9 @@ _BlendNormal_MMX:
 BlendNormal_MMX_Done:
 
   epilogue
-; }
 
 
 ; void BlendMultiply_MM(dword *src, dword *dst, dword num)
-; {
 align 16
 _BlendMultiply_MMX:
   prologue
@@ -288,11 +470,9 @@ _BlendMultiply_MMX:
 
 BlendMultiply_MMX_Done:
   epilogue
-; }
 
 
 ; void BlendAdditive(dword *src, dword *dst, dword num)
-; {
 align 16
 _BlendAdditive_MMX:
   prologue
@@ -337,11 +517,10 @@ _BlendAdditive_MMX:
 
 BlendAdditive_MMX_Done:
   epilogue
-; }
 
 
 ; void BlendSubtractive_MMX(dword *src, dword *dst, dword num)
-; {
+;
 align 16
 _BlendSubtractive_MMX:
   prologue
@@ -386,4 +565,3 @@ _BlendSubtractive_MMX:
 
 BlendSubtractive_MMX_Done:
   epilogue
-; }

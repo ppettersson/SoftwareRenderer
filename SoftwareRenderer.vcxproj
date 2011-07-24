@@ -92,10 +92,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AlignedAlloc.cpp" />
     <ClCompile Include="Blend.cpp">
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NoListing</AssemblerOutput>
     </ClCompile>
-    <ClCompile Include="Blend_mmx_inline.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="CPU.cpp" />
     <ClCompile Include="CrossFade.cpp" />

@@ -1,4 +1,3 @@
-- Use function pointers and a startup function that checks CPU type and assigns the right functions.
 - Use NASM/YASM/ (MASM?)
     syntax highlighting?
     debugging?
@@ -7,6 +6,7 @@
     go through the asm file and take advantage of macros etc (debugging doesn't work with macros...)
     read through nasm and yasm manuals properly
 
+- Finish the new triangle renderer, half space method.
 - Go through the blend modes and verify that they are actually correct, seems to be some issues with some of them.
 - Separate utility library
 - Rewrite TinyPTC to own code

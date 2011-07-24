@@ -3,14 +3,18 @@
 
 // -- Config ------------------------------------------------------------------
 
-#define USE_MMX_ASM
+#ifdef _MSC_VER
+# define USE_INLINE_ASM           // ToDo: convert inline vc asm to yasm
+#endif
+
+#define USE_ASM                   // Linked in yasm files.
 
 
 // -- Compiler warnings -------------------------------------------------------
 
 #ifdef _MSC_VER
-#pragma warning(disable : 4100)   // unreferenced formal parameter
-#define _CRT_SECURE_NO_WARNINGS   // This function or variable may be unsafe
+# pragma warning(disable : 4100)  // unreferenced formal parameter
+# define _CRT_SECURE_NO_WARNINGS  // This function or variable may be unsafe
 #endif
 
 // -- Types -------------------------------------------------------------------
@@ -115,15 +119,19 @@ T Clamp(const T &x, const T &min, const T &max)
     return x;
 }
 
-#ifdef USE_MMX_ASM
+#ifdef USE_INLINE_ASM
 void MemCpy(void *dst, const void *src, size_t count);
 void MemSet32(void *dst, dword src, size_t count);
-#else
+#else // USE_INLINE_ASM
 #include <memory.h>
 #define MemCpy  memcpy
-#endif
+#endif // USE_INLINE_ASM
 
-#define ASSERT(x)   { if (!(x)) { __asm int 3 } }
+#define ASSERT(x)       { if (!(x)) { __asm int 3 } }
+#define ASSERT_ONCE(x)  { static bool once = true; if (once) { once = false; ASSERT(x); } }
+
+void *AllocAlign32(dword size);
+void FreeAlign32(void *data);
 
 // -- Image -------------------------------------------------------------------
 
@@ -181,7 +189,7 @@ extern void (*BlendDarken)(dword *src, dword *dst, dword num);
 
 // Leave mmx mode to restore floating point functionality.
 // This must be called after any of the Blend functions.
-#if defined(USE_MMX_ASM)
+#if defined(USE_INLINE_ASM)
 inline void BlendEnd()  { __asm emms }
 #else
 inline void BlendEnd()  { }

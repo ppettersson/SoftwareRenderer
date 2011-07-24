@@ -16,6 +16,7 @@ dword GetCpuFeatures()
 {
   dword c = 0, d = 0;
 
+#ifdef USE_INLINE_ASM
   __asm
   {
     // ToDo:
@@ -29,6 +30,7 @@ dword GetCpuFeatures()
     mov   c, ecx
     mov   d, edx
   }
+#endif // USE_INLINE_ASM
 
   // The default is fall back on full C implementation.
   dword cpuFeatures = 0;
@@ -68,15 +70,16 @@ extern void BlendScreen_C         (dword *src, dword *dst, dword num);
 extern void BlendLighten_C        (dword *src, dword *dst, dword num);
 extern void BlendDarken_C         (dword *src, dword *dst, dword num);
 
+#ifdef USE_ASM
 // MMX versions.
+extern "C" {
 extern dword BlendNormal1_MMX     (dword src, dword dst);
 extern dword BlendMultiply1_MMX   (dword src, dword dst);
 extern dword BlendAdditive1_MMX   (dword src, dword dst);
 extern dword BlendSubtractive1_MMX(dword src, dword dst);
-//extern dword BlendScreen1_MMX     (dword src, dword dst);
+extern dword BlendScreen1_MMX     (dword src, dword dst);
 //extern dword BlendLighten1_MMX    (dword src, dword dst);
 //extern dword BlendDarken1_MMX     (dword src, dword dst);
-extern "C" {
 extern void BlendNormal_MMX       (dword *src, dword *dst, dword num);
 extern void BlendMultiply_MMX     (dword *src, dword *dst, dword num);
 extern void BlendAdditive_MMX     (dword *src, dword *dst, dword num);
@@ -85,6 +88,7 @@ extern void BlendSubtractive_MMX  (dword *src, dword *dst, dword num);
 //extern void BlendLighten_MMX      (dword *src, dword *dst, dword num);
 //extern void BlendDarken_MMX       (dword *src, dword *dst, dword num);
 }
+#endif // USE_ASM
 
 
 // The dispatch table.
@@ -106,6 +110,7 @@ void (*BlendDarken)               (dword *src, dword *dst, dword num) = BlendDar
 
 void SetupDispatchTable()
 {
+#ifdef USE_ASM
   dword cpuFeatures = GetCpuFeatures();
 
   if (cpuFeatures & kCPU_MMX)
@@ -114,7 +119,7 @@ void SetupDispatchTable()
     BlendMultiply1    = BlendMultiply1_MMX;
     BlendAdditive1    = BlendAdditive1_MMX;
     BlendSubtractive1 = BlendSubtractive1_MMX;
-    //BlendScreen1      = BlendScreen1_MMX;
+    BlendScreen1      = BlendScreen1_MMX;
     //BlendLighten1     = BlendLighten1_MMX;
     //BlendDarken1      = BlendDarken1_MMX;
     BlendNormal       = BlendNormal_MMX;
@@ -125,4 +130,5 @@ void SetupDispatchTable()
     //BlendLighten      = BlendLighten_MMX;
     //BlendDarken       = BlendDarken_MMX;
   }
+#endif // USE_ASM
 }

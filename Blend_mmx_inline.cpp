@@ -1,8 +1,8 @@
 #include "SoftwareRenderer.h"
 
-#pragma warning(disable : 4799) // function 'x' has no EMMS instruction
+#if defined(USE_MMX_ASM) && 0
 
-#if defined(USE_MMX_ASM)
+#pragma warning(disable : 4799) // function 'x' has no EMMS instruction
 
 dword BlendNormal1_MMX(dword src, dword dst)
 {
@@ -152,15 +152,6 @@ dword BlendScreen1_MMX(dword src, dword dst)
   return result;
 }
 
-
-extern "C" {
-void BlendNormal_MMX(dword *src, dword *dst, dword num);
-void BlendMultiply_MMX(dword *src, dword *dst, dword num);
-void BlendAdditive_MMX(dword *src, dword *dst, dword num);
-void BlendSubtractive_MMX(dword *src, dword *dst, dword num);
-}
-
-#if 0
 void BlendNormal_MMX(dword *src, dword *dst, dword num)
 {
   __asm
@@ -500,6 +491,5 @@ void BlendSubtractive_MMX(dword *src, dword *dst, dword num)
   Done:
   }
 }
-#endif // 0
 
 #endif

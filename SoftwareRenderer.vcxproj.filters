@@ -79,14 +79,14 @@
     <ClCompile Include="CPU.cpp">
       <Filter>SoftwareRenderer\Misc</Filter>
     </ClCompile>
-    <ClCompile Include="Blend_mmx_inline.cpp">
-      <Filter>SoftwareRenderer\ImagePrimitives</Filter>
-    </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>SoftwareRenderer\Misc</Filter>
     </ClCompile>
     <ClCompile Include="TestSuite.cpp" />
     <ClCompile Include="Input.cpp">
+      <Filter>SoftwareRenderer\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="AlignedAlloc.cpp">
       <Filter>SoftwareRenderer\Misc</Filter>
     </ClCompile>
   </ItemGroup>
