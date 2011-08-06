@@ -2,15 +2,8 @@
 #include "ScanConvert.h"
 #include "CPU.h"
 #include "Timer.h"
+#include "Platform.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <windows.h>
-
-extern "C"
-{
-#include "../TinyPTC/tinyptc.h"
-extern HWND wnd;
-}
 
 bool InitFrameBuffer(dword width, dword height);
 void QuitFrameBuffer();
@@ -25,7 +18,7 @@ bool Init(dword width, dword height)
   InitFrameBuffer(width, height);
   InitScanConvert();
 
-  if (ptc_open("SoftwareRenderer", width, height))
+  if (PlatformOpen(width, height))
   {
     InitTimer();
     return true;
@@ -36,13 +29,13 @@ bool Init(dword width, dword height)
 
 bool PresentFrame()
 {
-  if (frameBuffer && ptc_update(frameBuffer))
+  if (frameBuffer && PlatformUpdate(frameBuffer))
   {
     UpdateTimer();
 
     char msg[256];
     sprintf_s(msg, 256, "SoftwareRenderer - [FPS = %d | %.1f]", GetFpsAverage(), GetFps());
-    SetWindowText(wnd, msg);
+    PlatformSetWindowCaption(msg);
 
     return true;
   }
@@ -54,6 +47,5 @@ void Quit()
 {
   QuitFrameBuffer();
   QuitScanConvert();
-
-  ptc_close();
+  PlatformClose();
 }

@@ -4,9 +4,6 @@
     <Filter Include="SoftwareRenderer">
       <UniqueIdentifier>{8db3fcca-aff4-47b0-aba1-6eb3f26d300f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TinyPTC">
-      <UniqueIdentifier>{bfd98e94-4597-43ad-a85d-228c0fbe56e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SoftwareRenderer\FrameBuffer">
       <UniqueIdentifier>{2690325f-4c20-4379-a1d1-f08f9d3051bd}</UniqueIdentifier>
     </Filter>
@@ -19,25 +16,13 @@
     <Filter Include="SoftwareRenderer\DrawPrimitives">
       <UniqueIdentifier>{104d365d-d490-494d-88b8-a83d1e45aea4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SoftwareRenderer\Platform">
+      <UniqueIdentifier>{a9952852-5f13-4084-aaa2-6655ab808654}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SoftwareRenderer.cpp">
       <Filter>SoftwareRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\TinyPTC\convert.c">
-      <Filter>TinyPTC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\TinyPTC\ddraw.c">
-      <Filter>TinyPTC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\TinyPTC\gdi.c">
-      <Filter>TinyPTC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\TinyPTC\tinyptc.c">
-      <Filter>TinyPTC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\TinyPTC\vfw.c">
-      <Filter>TinyPTC</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="FrameBuffer.cpp">
@@ -89,19 +74,13 @@
     <ClCompile Include="AlignedAlloc.cpp">
       <Filter>SoftwareRenderer\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="PlatformWin32.cpp">
+      <Filter>SoftwareRenderer\Platform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SoftwareRenderer.h">
       <Filter>SoftwareRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\TinyPTC\convert.h">
-      <Filter>TinyPTC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\TinyPTC\mmx.h">
-      <Filter>TinyPTC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\TinyPTC\tinyptc.h">
-      <Filter>TinyPTC</Filter>
     </ClInclude>
     <ClInclude Include="ScanConvert.h">
       <Filter>SoftwareRenderer\DrawPrimitives</Filter>
@@ -119,11 +98,11 @@
     <ClInclude Include="Input.h">
       <Filter>SoftwareRenderer\Misc</Filter>
     </ClInclude>
+    <ClInclude Include="Platform.h">
+      <Filter>SoftwareRenderer\Platform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\TinyPTC\mmx.asm">
-      <Filter>TinyPTC</Filter>
-    </None>
     <None Include="ToDo.txt" />
   </ItemGroup>
   <ItemGroup>

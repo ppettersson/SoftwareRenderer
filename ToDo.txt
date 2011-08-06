@@ -1,17 +1,9 @@
-- Use NASM/YASM/ (MASM?)
-    syntax highlighting?
-    debugging?
-    optimization in release mode?
-
-    go through the asm file and take advantage of macros etc (debugging doesn't work with macros...)
-    read through nasm and yasm manuals properly
+- Make Linux and Mac versions.
+  - Android / iOS versions?
 
 - Finish the new triangle renderer, half space method.
 - Go through the blend modes and verify that they are actually correct, seems to be some issues with some of them.
+  - Finish the mmx blend code: BlendLighten1, BlendDarken1, BlendScreen, BlendLighten, BlendDarken.
 - Separate utility library
-- Rewrite TinyPTC to own code
-  - Understand all the convert code first
-  - Make Linux and Mac versions.
-    - Android / iOS versions?
 - 64 bit mode?
 - Constify the code.
