@@ -201,7 +201,10 @@ static void TestCrossFade(real timePassed)
   Image *t0 = texture3;
   Image *t1 = texture4;
 
-  CrossFade(frameBuffer, screenWidth, t1->data, t0->data, t0->width, t0->height, (byte)(Abs(sinf(timePassed)) * 255));
+  static real accumulatedTime = 0;
+  accumulatedTime += (timePassed * 0.0005f);
+
+  CrossFade(frameBuffer, screenWidth, t1->data, t0->data, t0->width, t0->height, (byte)(Abs(sinf(accumulatedTime)) * 255));
 }
 
 static void TestStretchBlit(real timePassed)
@@ -299,7 +302,7 @@ static int currentTest = kNumTests - 1;
 
 void RunTestSuite()
 {
-  float timePassed = 0.1f;
+  float timePassed = 1000.0f / 60;  // tmp
 
   if ((currentTest > 0) && KeyDown(kKey_Left))
   {

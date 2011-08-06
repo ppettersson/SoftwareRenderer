@@ -63,6 +63,7 @@ bool PlatformOpen(dword width, dword height)
   windowClass.style = CS_OWNDC;
   windowClass.lpfnWndProc = MessageHandler;
   windowClass.lpszClassName = CLASS_NAME;
+  windowClass.hCursor = LoadCursor(0, IDC_ARROW);
   if (!RegisterClassEx(&windowClass))
     return false;
 
@@ -137,9 +138,9 @@ void PlatformClose()
 }
 
 extern int main();
-void WinMainCRTStartup()
+int CALLBACK WinMain(HINSTANCE instance, HINSTANCE previous, LPSTR commandLine, int show)
 {
-  main();
+  return main();
 }
 
 #endif // _WIN32

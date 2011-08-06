@@ -1,6 +1,6 @@
 #include "SoftwareRenderer.h"
 
-#if 0
+#if 1
 
 void CrossFade(dword *dst, dword stride,
                dword *srcA, dword *srcB,
