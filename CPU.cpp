@@ -92,20 +92,20 @@ extern void BlendSubtractive_MMX  (dword *src, dword *dst, dword num);
 
 
 // The dispatch table.
-dword (*BlendNormal1)             (dword src, dword dst) = BlendNormal1_C;
-dword (*BlendMultiply1)           (dword src, dword dst) = BlendMultiply1_C;
-dword (*BlendAdditive1)           (dword src, dword dst) = BlendAdditive1_C;
-dword (*BlendSubtractive1)        (dword src, dword dst) = BlendSubtractive1_C;
-dword (*BlendScreen1)             (dword src, dword dst) = BlendScreen1_C;
-dword (*BlendLighten1)            (dword src, dword dst) = BlendLighten1_C;
-dword (*BlendDarken1)             (dword src, dword dst) = BlendDarken1_C;
-void (*BlendNormal)               (dword *src, dword *dst, dword num) = BlendNormal_C;
-void (*BlendMultiply)             (dword *src, dword *dst, dword num) = BlendMultiply_C;
-void (*BlendAdditive)             (dword *src, dword *dst, dword num) = BlendAdditive_C;
-void (*BlendSubtractive)          (dword *src, dword *dst, dword num) = BlendSubtractive_C;
-void (*BlendScreen)               (dword *src, dword *dst, dword num) = BlendScreen_C;
-void (*BlendLighten)              (dword *src, dword *dst, dword num) = BlendLighten_C;
-void (*BlendDarken)               (dword *src, dword *dst, dword num) = BlendDarken_C;
+dword (*BlendNormal1)       (dword src, dword dst)              = BlendNormal1_C;
+dword (*BlendMultiply1)     (dword src, dword dst)              = BlendMultiply1_C;
+dword (*BlendAdditive1)     (dword src, dword dst)              = BlendAdditive1_C;
+dword (*BlendSubtractive1)  (dword src, dword dst)              = BlendSubtractive1_C;
+dword (*BlendScreen1)       (dword src, dword dst)              = BlendScreen1_C;
+dword (*BlendLighten1)      (dword src, dword dst)              = BlendLighten1_C;
+dword (*BlendDarken1)       (dword src, dword dst)              = BlendDarken1_C;
+void  (*BlendNormal)        (dword *src, dword *dst, dword num) = BlendNormal_C;
+void  (*BlendMultiply)      (dword *src, dword *dst, dword num) = BlendMultiply_C;
+void  (*BlendAdditive)      (dword *src, dword *dst, dword num) = BlendAdditive_C;
+void  (*BlendSubtractive)   (dword *src, dword *dst, dword num) = BlendSubtractive_C;
+void  (*BlendScreen)        (dword *src, dword *dst, dword num) = BlendScreen_C;
+void  (*BlendLighten)       (dword *src, dword *dst, dword num) = BlendLighten_C;
+void  (*BlendDarken)        (dword *src, dword *dst, dword num) = BlendDarken_C;
 
 
 void SetupDispatchTable()

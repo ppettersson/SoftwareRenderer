@@ -36,6 +36,8 @@ section .text
 ; Arg1 * alpha + Arg2 * (1 - alpha)
 ;
 ; dword BlendNormal1_MMX(dword src, dword dst)
+%define src   ebp + 8
+%define dst   ebp + 12
 align 16
 _BlendNormal1_MMX:
   ; Set up stack frame.
@@ -48,18 +50,18 @@ _BlendNormal1_MMX:
   pxor        mm0, mm0          ; zero
 
   ; Unpack source pixel to a word per component.
-  movd        mm1, [ebp + 8]    ; src
+  movd        mm1, [src]
   punpcklbw   mm1, mm0
 
   ; Unpack destination pixel to a word per component.
-  movd        mm2, [ebp + 12]   ; dst
+  movd        mm2, [dst]
   punpcklbw   mm2, mm0
 
   ; Extract the alpha value in the source ARGB pixel and expand it into all four channels.
   ; src_alpha  = src & 0xff000000
   ; src_alpha |= src_alpha >> 8
   ; src_alpha |= src_alpha >> 16
-  mov         eax, [ebp + 8]    ; src
+  mov         eax, [src]
   and         eax, 0xff000000   ; mask off RGB so we only have the alpha. eax = AA000000
   mov         ebx, eax
   shr         ebx, 8            ; ebx = 00AA0000
@@ -106,14 +108,16 @@ _BlendNormal1_MMX:
 ; Arg1 * Arg2
 ;
 ; dword BlendMultiply1_MMX(dword src, dword dst)
+%define src   ebp + 8
+%define dst   ebp + 12
 align 16
 _BlendMultiply1_MMX:
   ; Set up stack frame.
   push        ebp
   mov         ebp, esp
 
-  movd        mm0, [ebp + 8]  ; src
-  movd        mm1, [ebp + 12] ; dst
+  movd        mm0, [src]
+  movd        mm1, [dst]
 
   pxor        mm7, mm7    ; zero
 
@@ -136,6 +140,8 @@ _BlendMultiply1_MMX:
 ; Arg1 + Arg2
 ;
 ; dword BlendAdditive1_MMX(dword src, dword dst)
+%define src   ebp + 8
+%define dst   ebp + 12
 align 16
 _BlendAdditive1_MMX:
   ; Set up stack frame.
@@ -143,8 +149,8 @@ _BlendAdditive1_MMX:
   mov         ebp, esp
 
   ; Load up the source and destination operands.
-  movd        mm0, [ebp + 8]
-  movd        mm1, [ebp + 12]
+  movd        mm0, [src]
+  movd        mm1, [dst]
 
   ; Additive blend with saturation.
   paddusb     mm0, mm1
@@ -160,6 +166,8 @@ _BlendAdditive1_MMX:
 ; Arg1 - Arg2
 ;
 ; dword BlendSubtractive1_MMX(dword src, dword dst)
+%define src   ebp + 8
+%define dst   ebp + 12
 align 16
 _BlendSubtractive1_MMX:
   ; Set up stack frame.
@@ -167,8 +175,8 @@ _BlendSubtractive1_MMX:
   mov         ebp, esp
 
   ; Load up the source and destination operands.
-  movd        mm0, [ebp + 8]
-  movd        mm1, [ebp + 12]
+  movd        mm0, [src]
+  movd        mm1, [dst]
 
   ; Subtractive blend with saturation.
   psubusb     mm0, mm1
@@ -184,6 +192,8 @@ _BlendSubtractive1_MMX:
 ; Arg1 + Arg2 - Arg1 * Arg2
 ;
 ; dword BlendScreen1_MMX(dword src, dword dst)
+%define src   ebp + 8
+%define dst   ebp + 12
 align 16
 _BlendScreen1_MMX:
   ; Set up stack frame.
@@ -194,9 +204,9 @@ _BlendScreen1_MMX:
   pxor        mm0, mm0
 
   ; Get the src and dst pixels and expand them to words to avoid saturation when adding.
-  movd        mm1, [ebp + 8]  ; src
+  movd        mm1, [src]
   punpcklbw   mm1, mm0
-  movd        mm2, [ebp + 12] ; dst
+  movd        mm2, [dst]
   punpcklbw   mm2, mm0
 
   ; mm3 = src + dst
@@ -222,14 +232,17 @@ _BlendScreen1_MMX:
 
 
 ; void BlendNormal_MMX(dword *src, dword *dst, dword num)
+%define src   ebp + 8
+%define dst   ebp + 12
+%define num   ebp + 16
 align 16
 _BlendNormal_MMX:
   prologue
 
   ; Get the arguments into registers.
-  mov         esi, [ebp + 8]  ; src
-  mov         edi, [ebp + 12] ; dst
-  mov         ecx, [ebp + 16] ; num
+  mov         esi, [src]
+  mov         edi, [dst]
+  mov         ecx, [num]
 
   ; We'll work in 64 bit so we need to special case the last pixel if it's odd.
   mov         edx, ecx
@@ -397,19 +410,21 @@ _BlendNormal_MMX:
   movd        [edi], mm1
 
 BlendNormal_MMX_Done:
-
   epilogue
 
 
 ; void BlendMultiply_MM(dword *src, dword *dst, dword num)
+%define src   ebp + 8
+%define dst   ebp + 12
+%define num   ebp + 16
 align 16
 _BlendMultiply_MMX:
   prologue
 
   ; Get the arguments into registers.
-  mov         esi, [ebp + 8]  ; src
-  mov         edi, [ebp + 12] ; dst
-  mov         ecx, [ebp + 16] ; num
+  mov         esi, [src]
+  mov         edi, [dst]
+  mov         ecx, [num]
 
   ; We'll work in 64 bit so we need to special case the last pixel if it's odd.
   mov         edx, ecx
@@ -473,14 +488,17 @@ BlendMultiply_MMX_Done:
 
 
 ; void BlendAdditive(dword *src, dword *dst, dword num)
+%define src   ebp + 8
+%define dst   ebp + 12
+%define num   ebp + 16
 align 16
 _BlendAdditive_MMX:
   prologue
 
   ; Get the arguments into registers.
-  mov         esi, [ebp + 8]  ; src
-  mov         edi, [ebp + 12] ; dst
-  mov         ecx, [ebp + 16] ; num
+  mov         esi, [src]
+  mov         edi, [dst]
+  mov         ecx, [num]
 
   ; We'll work in 64 bit so we need to special case the last pixel if it's odd.
   mov         edx, ecx
@@ -521,14 +539,17 @@ BlendAdditive_MMX_Done:
 
 ; void BlendSubtractive_MMX(dword *src, dword *dst, dword num)
 ;
+%define src   ebp + 8
+%define dst   ebp + 12
+%define num   ebp + 16
 align 16
 _BlendSubtractive_MMX:
   prologue
 
   ; Get the arguments into registers.
-  mov         esi, [ebp + 8]  ; src
-  mov         edi, [ebp + 12] ; dst
-  mov         ecx, [ebp + 16] ; num
+  mov         esi, [src]
+  mov         edi, [dst]
+  mov         ecx, [num]
 
   ; We'll work in 64 bit so we need to special case the last pixel if it's odd.
   mov         edx, ecx
