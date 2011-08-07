@@ -21,6 +21,7 @@ int main(int argc, char **argv)
       break;
   }
 
+  QuitTestSuite();
   Quit();
   return 0;
 }

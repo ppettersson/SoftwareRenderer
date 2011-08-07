@@ -19,6 +19,7 @@ static HWND           window = NULL;
 static HDC            deviceContext = NULL;
 static BITMAPINFO_EX  bitmapInfo;
 static dword         *currentFrameBuffer = NULL;
+static bool           close = false;
 
 static LRESULT CALLBACK MessageHandler(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -38,10 +39,9 @@ static LRESULT CALLBACK MessageHandler(HWND window, UINT message, WPARAM wParam,
 
   case WM_KEYDOWN:
     // Close on Escape key down.
-    if ((wParam & 0xff) != 27)
-      break;
-
-    // Fall through.
+    if ((wParam & 0xff) == 27)
+      close = true;
+    break;
 
   case WM_CLOSE:
     PlatformClose();
@@ -103,6 +103,10 @@ bool PlatformOpen(dword width, dword height)
 
 bool PlatformUpdate(dword *frameBuffer)
 {
+  // Exit if Escape was pressed.
+  if (close)
+    return false;
+
   // Store the buffer to draw.
   currentFrameBuffer = frameBuffer;
 

@@ -38,12 +38,12 @@ class Image
 {
 public:
   Image() : width(0), height(0), data(0)        { }
-  Image(dword w, dword h) : width(w), height(h) { data = new dword [w * h]; }
-  ~Image()                                      { if (data) delete [] data; }
+  Image(dword w, dword h);
+  ~Image();
 
   dword  width,
          height,
-        *data;
+        *data;    // Keep this data aligned for better performance.
 };
 
 // -- FrameBuffer -------------------------------------------------------------
@@ -130,8 +130,8 @@ void MemSet32(void *dst, dword src, size_t count);
 #define ASSERT(x)       { if (!(x)) { __asm int 3 } }
 #define ASSERT_ONCE(x)  { static bool once = true; if (once) { once = false; ASSERT(x); } }
 
-void *AllocAlign32(dword size);
-void FreeAlign32(void *data);
+void *AllocAlign(dword size, dword align = 31); // The align value should be (pow2 - 1).
+void FreeAlign(void *data);
 
 // -- Image -------------------------------------------------------------------
 

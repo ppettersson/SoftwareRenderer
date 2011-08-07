@@ -21,6 +21,18 @@ struct TgaHeader
 };
 #pragma pack(pop)
 
+Image::Image(dword w, dword h)
+: width(w)
+, height(h)
+{
+  dword numPixels = w * h;
+  data = numPixels ? (dword *)AllocAlign(numPixels * sizeof(dword)) : NULL;
+}
+
+Image::~Image()
+{
+  FreeAlign(data);
+}
 
 Image *LoadTGA(const char *fileName)
 {

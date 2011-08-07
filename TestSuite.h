@@ -3,5 +3,6 @@
 
 bool InitTestSuite();
 void RunTestSuite();
+void QuitTestSuite();
 
 #endif // TEST_SUITE_H

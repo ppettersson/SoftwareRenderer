@@ -319,3 +319,12 @@ void RunTestSuite()
   sprintf(message, "Test %d/%d, %s", currentTest, kNumTests, tests[currentTest].name);
   DrawString(20, 20, message);
 }
+
+void QuitTestSuite()
+{
+  delete texture1;
+  delete texture2;
+  delete texture3;
+  delete texture4;
+  delete texture5;
+}
