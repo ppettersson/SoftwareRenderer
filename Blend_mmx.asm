@@ -4,8 +4,8 @@ global _BlendMultiply1_MMX
 global _BlendAdditive1_MMX
 global _BlendSubtractive1_MMX
 global _BlendScreen1_MMX
-global _BlendLighten1_MMX
-global _BlendDarken1_MMX
+;global _BlendLighten1_MMX
+;global _BlendDarken1_MMX
 global _BlendNormal_MMX
 global _BlendMultiply_MMX
 global _BlendAdditive_MMX
@@ -235,7 +235,7 @@ _BlendScreen1_MMX:
   pop         ebp
   ret
 
-
+%if 0 ; pcmpgtb is a signed compare, need unsigned compare...
 ; Max(Arg1, Arg2)
 ;
 ; dword BlendLighten1_MMX(dword src, dword dst)
@@ -256,7 +256,7 @@ _BlendLighten1_MMX:
   pand        mm1, mm3    ; mm1 = src & mask
   pandn       mm3, mm2    ; mm3 = dst & inverse-mask
 
-  por         mm1, mm3    ; (src & mask) | (dst & inverse-mask)
+  por         mm1, mm3    ; mm1 = (src & mask) | (dst & inverse-mask)
 
   movd        eax, mm1    ; Store the result.
 
@@ -292,6 +292,7 @@ _BlendDarken1_MMX:
   ; Restore stack frame and return to callee.
   pop         ebp
   ret
+%endif
 
 
 ; void BlendNormal_MMX(dword *src, dword *dst, dword num)
@@ -649,3 +650,71 @@ _BlendSubtractive_MMX:
 
 BlendSubtractive_MMX_Done:
   epilogue
+
+
+%if 0   ; Can't use pcmpgtb, it's a SIGNED compare, unsigned is needed here...
+; void BlendLighten(dword *src, dword *dst, dword num)
+%define src   ebp + 8
+%define dst   ebp + 12
+%define num   ebp + 16
+align 16
+_BlendLighten_MMX:
+  prologue
+
+  ; Get the arguments into registers.
+  mov         esi, [src]
+  mov         edi, [dst]
+  mov         ecx, [num]
+
+  ; We'll work in 64 bit so we need to special case the last pixel if it's odd.
+  mov         edx, ecx
+  and         edx, 1
+
+  ; num /= 2
+  shr         ecx, 1
+
+  ; The inner loop that does takes the max for the pixel components, 2 pixels at a time.
+.loop:
+  movq        mm0, [edi]  ; Copy the 64 bit destination data into register 0.
+  movq        mm1, [esi]  ; Copy the 64 bit source data into register 1.
+
+  ; Create the mask.
+  movq        mm2, mm0
+  pcmpgtb     mm2, mm1    ; mm2 = ">" mask.
+
+  ; Use the mask to get the max of the components.
+  pand        mm0, mm2    ; mm0 = src & mask
+  pandn       mm2, mm1    ; mm2 = dst & inverse-mask
+
+  por         mm0, mm2    ; mm0 = (src & mask) | (dst & inverse-mask)
+
+  movq        [edi], mm0  ; Copy the 64 bit result back into memory.
+
+  add         edi, 8
+  add         esi, 8
+
+  dec         ecx
+  jnz         .loop
+
+  ; Handle the extra odd pixel if there was one.
+  cmp         edx, 0
+  jz          BlendLighten_MMX_Done
+
+  movd        mm0, [edi]
+  movd        mm1, [esi]
+
+  ; Create the mask.
+  movq        mm2, mm0
+  pcmpgtb     mm2, mm0    ; mm2 = ">" mask.
+
+  ; Use the mask to get the max of the components.
+  pand        mm0, mm2    ; mm0 = src & mask
+  pandn       mm2, mm1    ; mm2 = dst & inverse-mask
+
+  por         mm0, mm2    ; mm0 = (src & mask) | (dst & inverse-mask)
+
+  movd        [edi], mm0
+
+BlendLighten_MMX_Done:
+  epilogue
+%endif
