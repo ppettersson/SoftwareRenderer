@@ -4,10 +4,15 @@ global _BlendMultiply1_MMX
 global _BlendAdditive1_MMX
 global _BlendSubtractive1_MMX
 global _BlendScreen1_MMX
+global _BlendLighten1_MMX
+global _BlendDarken1_MMX
 global _BlendNormal_MMX
 global _BlendMultiply_MMX
 global _BlendAdditive_MMX
 global _BlendSubtractive_MMX
+;global _BlendScreen_MMX
+;global _BlendLighten_MMX
+;global _BlendDarken_MMX
 
 
 ; Code
@@ -225,6 +230,64 @@ _BlendScreen1_MMX:
 
   ; Store the result in eax
   movd        eax, mm3
+
+  ; Restore stack frame and return to callee.
+  pop         ebp
+  ret
+
+
+; Max(Arg1, Arg2)
+;
+; dword BlendLighten1_MMX(dword src, dword dst)
+%define src   ebp + 8
+%define dst   ebp + 12
+align 16
+_BlendLighten1_MMX:
+  ; Set up stack frame.
+  push        ebp
+  mov         ebp, esp
+
+  movd        mm1, [src]  ; mm1 = src
+  movd        mm2, [dst]  ; mm2 = dst
+
+  movq        mm3, mm1
+  pcmpgtb     mm3, mm2    ; mm3 = ">" mask
+
+  pand        mm1, mm3    ; mm1 = src & mask
+  pandn       mm3, mm2    ; mm3 = dst & inverse-mask
+
+  por         mm1, mm3    ; (src & mask) | (dst & inverse-mask)
+
+  movd        eax, mm1    ; Store the result.
+
+  ; Restore stack frame and return to callee.
+  pop         ebp
+  ret
+
+
+; Min(Arg1, Arg2)
+;
+; dword BlendDarken1_MMX(dword src, dword dst)
+%define src   ebp + 8
+%define dst   ebp + 12
+align 16
+_BlendDarken1_MMX:
+  ; Set up stack frame.
+  push        ebp
+  mov         ebp, esp
+
+  movd        mm1, [src]  ; mm1 = src
+  movd        mm2, [dst]  ; mm2 = dst
+
+  movq        mm3, mm1
+  pcmpgtb     mm3, mm2    ; mm3 = ">" mask
+
+  pand        mm2, mm3    ; mm2 = dst & mask
+  pandn       mm3, mm1    ; mm3 = src & inverse-mask
+
+  por         mm2, mm3    ; (src & mask) | (dst & inverse-mask)
+
+  movd        eax, mm2    ; Store the result.
 
   ; Restore stack frame and return to callee.
   pop         ebp

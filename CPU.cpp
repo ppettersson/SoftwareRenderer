@@ -32,7 +32,7 @@ dword GetCpuFeatures()
   }
 #endif // USE_INLINE_ASM
 
-  // The default is fall back on full C implementation.
+  // The default is to fall back on full C implementation.
   dword cpuFeatures = 0;
 
   if (c & (1 << 0))
@@ -78,8 +78,8 @@ extern dword BlendMultiply1_MMX   (dword src, dword dst);
 extern dword BlendAdditive1_MMX   (dword src, dword dst);
 extern dword BlendSubtractive1_MMX(dword src, dword dst);
 extern dword BlendScreen1_MMX     (dword src, dword dst);
-//extern dword BlendLighten1_MMX    (dword src, dword dst);
-//extern dword BlendDarken1_MMX     (dword src, dword dst);
+extern dword BlendLighten1_MMX    (dword src, dword dst);
+extern dword BlendDarken1_MMX     (dword src, dword dst);
 extern void BlendNormal_MMX       (dword *src, dword *dst, dword num);
 extern void BlendMultiply_MMX     (dword *src, dword *dst, dword num);
 extern void BlendAdditive_MMX     (dword *src, dword *dst, dword num);
@@ -120,8 +120,8 @@ void SetupDispatchTable()
     BlendAdditive1    = BlendAdditive1_MMX;
     BlendSubtractive1 = BlendSubtractive1_MMX;
     BlendScreen1      = BlendScreen1_MMX;
-    //BlendLighten1     = BlendLighten1_MMX;
-    //BlendDarken1      = BlendDarken1_MMX;
+    BlendLighten1     = BlendLighten1_MMX;
+    BlendDarken1      = BlendDarken1_MMX;
     BlendNormal       = BlendNormal_MMX;
     BlendMultiply     = BlendMultiply_MMX;
     BlendAdditive     = BlendAdditive_MMX;

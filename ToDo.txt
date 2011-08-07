@@ -1,4 +1,5 @@
 - Make Linux and Mac versions.
+  - Need to remove all inline asm first.
   - Android / iOS versions?
 
 - Finish the new triangle renderer, half space method.
