@@ -56,6 +56,7 @@ dword GetCpuFeatures()
 
 // C versions.
 extern dword BlendNormal1_C       (dword src, dword dst);
+extern dword BlendOver1_C         (dword src, dword dst);
 extern dword BlendMultiply1_C     (dword src, dword dst);
 extern dword BlendAdditive1_C     (dword src, dword dst);
 extern dword BlendSubtractive1_C  (dword src, dword dst);
@@ -63,6 +64,7 @@ extern dword BlendScreen1_C       (dword src, dword dst);
 extern dword BlendLighten1_C      (dword src, dword dst);
 extern dword BlendDarken1_C       (dword src, dword dst);
 extern void BlendNormal_C         (dword *src, dword *dst, dword num);
+extern void BlendOver_C           (dword *src, dword *dst, dword num);
 extern void BlendMultiply_C       (dword *src, dword *dst, dword num);
 extern void BlendAdditive_C       (dword *src, dword *dst, dword num);
 extern void BlendSubtractive_C    (dword *src, dword *dst, dword num);
@@ -74,6 +76,7 @@ extern void BlendDarken_C         (dword *src, dword *dst, dword num);
 // MMX versions.
 extern "C" {
 extern dword BlendNormal1_MMX     (dword src, dword dst);
+//extern dword BlendOver1_MMX     (dword src, dword dst);
 extern dword BlendMultiply1_MMX   (dword src, dword dst);
 extern dword BlendAdditive1_MMX   (dword src, dword dst);
 extern dword BlendSubtractive1_MMX(dword src, dword dst);
@@ -81,6 +84,7 @@ extern dword BlendScreen1_MMX     (dword src, dword dst);
 //extern dword BlendLighten1_MMX    (dword src, dword dst);
 //extern dword BlendDarken1_MMX     (dword src, dword dst);
 extern void BlendNormal_MMX       (dword *src, dword *dst, dword num);
+extern void BlendOver_MMX         (dword *src, dword *dst, dword num);
 extern void BlendMultiply_MMX     (dword *src, dword *dst, dword num);
 extern void BlendAdditive_MMX     (dword *src, dword *dst, dword num);
 extern void BlendSubtractive_MMX  (dword *src, dword *dst, dword num);
@@ -93,6 +97,7 @@ extern void BlendSubtractive_MMX  (dword *src, dword *dst, dword num);
 
 // The dispatch table.
 dword (*BlendNormal1)       (dword src, dword dst)              = BlendNormal1_C;
+dword (*BlendOver1)         (dword src, dword dst)              = BlendOver1_C;
 dword (*BlendMultiply1)     (dword src, dword dst)              = BlendMultiply1_C;
 dword (*BlendAdditive1)     (dword src, dword dst)              = BlendAdditive1_C;
 dword (*BlendSubtractive1)  (dword src, dword dst)              = BlendSubtractive1_C;
@@ -100,6 +105,7 @@ dword (*BlendScreen1)       (dword src, dword dst)              = BlendScreen1_C
 dword (*BlendLighten1)      (dword src, dword dst)              = BlendLighten1_C;
 dword (*BlendDarken1)       (dword src, dword dst)              = BlendDarken1_C;
 void  (*BlendNormal)        (dword *src, dword *dst, dword num) = BlendNormal_C;
+void  (*BlendOver)          (dword *src, dword *dst, dword num) = BlendOver_C;
 void  (*BlendMultiply)      (dword *src, dword *dst, dword num) = BlendMultiply_C;
 void  (*BlendAdditive)      (dword *src, dword *dst, dword num) = BlendAdditive_C;
 void  (*BlendSubtractive)   (dword *src, dword *dst, dword num) = BlendSubtractive_C;
@@ -116,6 +122,7 @@ void SetupDispatchTable()
   if (cpuFeatures & kCPU_MMX)
   {
     BlendNormal1      = BlendNormal1_MMX;
+    //BlendOver1        = BlendOver1_MMX;
     BlendMultiply1    = BlendMultiply1_MMX;
     BlendAdditive1    = BlendAdditive1_MMX;
     BlendSubtractive1 = BlendSubtractive1_MMX;
@@ -123,6 +130,7 @@ void SetupDispatchTable()
     //BlendLighten1     = BlendLighten1_MMX;
     //BlendDarken1      = BlendDarken1_MMX;
     BlendNormal       = BlendNormal_MMX;
+    //BlendOver         = BlendOver_MMX;
     BlendMultiply     = BlendMultiply_MMX;
     BlendAdditive     = BlendAdditive_MMX;
     BlendSubtractive  = BlendSubtractive_MMX;

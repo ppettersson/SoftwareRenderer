@@ -5,13 +5,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-const real PI = 3.1415926535f;
+static const real PI = 3.1415926535f;
 
-Image *texture1 = NULL,
-      *texture2 = NULL,
-      *texture3 = NULL,
-      *texture4 = NULL,
-      *texture5 = NULL;
+static Image *texture1 = NULL;
+static Image *texture2 = NULL;
+static Image *texture3 = NULL;
+static Image *texture4 = NULL;
+static Image *texture5 = NULL;
+
+static Image *textureAlphaBackground = NULL;
+static Image *textureAlphaOver = NULL;
 
 static void TestHorizontalLines(real timePassed)
 {
@@ -196,6 +199,12 @@ static void TestBlendedBlit(real timePassed)
     }
 }
 
+static void TestAlphaBlend(real timePassed)
+{
+  Blit(textureAlphaBackground, 0, 0);
+  BlitBlend(textureAlphaOver, 128, 0, BlendFunc(kBlend_Over));
+}
+
 static void TestCrossFade(real timePassed)
 {
   Image *t0 = texture3;
@@ -274,6 +283,34 @@ bool InitTestSuite()
   //texture3.Resize(512, 512);
   //texture4.Resize(512, 512);
 
+  textureAlphaBackground = new Image(512, 512);
+  for (int y = 0; y < 512; ++y)
+    for (int x = 0; x < 512; ++x)
+    {
+      dword *dst = textureAlphaBackground->data + x + y * 512;
+      if (x < 256)
+      {
+        if (y < 256)
+          *dst = kColorRed;
+        else
+          *dst = kColorBlue;
+      }
+      else
+      {
+        if (y < 256)
+          *dst = kColorGreen;
+        else
+          *dst = kColorWhite;
+      }
+    }
+
+  textureAlphaOver = new Image(256, 512);
+  for (int y = 0; y < 512; ++y)
+  {
+    dword *dst = textureAlphaOver->data + 128 + y * 256;
+    MemSet32(dst, Color(0, 0, 0, (byte)(y / 2)), 256);
+  }
+
   return true;
 }
 
@@ -290,6 +327,7 @@ struct Test
   { "blended polygon", TestBlendedPolygon },
   { "triangle", TestTriangle },
   { "blended blit", TestBlendedBlit },
+  { "alpha blend", TestAlphaBlend },
   { "crossfade", TestCrossFade },
   { "stretch blit", TestStretchBlit }
 };

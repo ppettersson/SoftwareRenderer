@@ -6,7 +6,7 @@ void CrossFade(dword *dst, dword stride,
                dword *srcA, dword *srcB,
                dword width, dword height, dword alpha)
 {
-  byte invAlpha  = 255 - alpha;
+  byte invAlpha  = (byte)(255 - alpha);
 
   for (dword y = 0; y < height; ++y)
   {

@@ -2,9 +2,12 @@
   - Need to remove all inline asm first.
   - Android / iOS versions?
 
-- Finish the new triangle renderer, half space method.
 - Go through the blend modes and verify that they are actually correct, seems to be some issues with some of them.
   - Finish the mmx blend code: BlendLighten1, BlendDarken1, BlendScreen, BlendLighten, BlendDarken.
+  - Look for optimization opportunities (MADD)
+  - Is it possible to do Max(/Min/Abs)?
+
+- Finish the new triangle renderer, half space method.
 - Separate utility library
 - 64 bit mode?
 - Constify the code.

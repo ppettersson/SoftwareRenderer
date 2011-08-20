@@ -171,6 +171,7 @@ void DrawString(dword x, dword y, const char *text, dword color = 0xffffffff);
 // These functions are a bit of a waste since they only work on 32 bits instead
 // of processing multiple pixels at the same time.
 extern dword (*BlendNormal1)(dword src, dword dst);
+extern dword (*BlendOver1)(dword src, dword dst);
 extern dword (*BlendMultiply1)(dword src, dword dst);
 extern dword (*BlendAdditive1)(dword src, dword dst);
 extern dword (*BlendSubtractive1)(dword src, dword dst);
@@ -180,6 +181,7 @@ extern dword (*BlendDarken1)(dword src, dword dst);
 
 // These blend functions operate on multiple pixels at a time.
 extern void (*BlendNormal)(dword *src, dword *dst, dword num);
+extern void (*BlendOver)(dword *src, dword *dst, dword num);
 extern void (*BlendMultiply)(dword *src, dword *dst, dword num);
 extern void (*BlendAdditive)(dword *src, dword *dst, dword num);
 extern void (*BlendSubtractive)(dword *src, dword *dst, dword num);
@@ -200,6 +202,7 @@ typedef void (*BlendFunc_t)(dword *src, dword *dst, dword num);
 enum BlendType
 {
   kBlend_Normal,
+  kBlend_Over,
   kBlend_Multiply,
   kBlend_Additive,
   kBlend_Subtractive,

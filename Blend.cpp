@@ -29,8 +29,35 @@ dword BlendNormal1_C(dword src, dword dst)
         g   = (sg * sa + dg * inv) >> 8,
         b   = (sb * sa + db * inv) >> 8;
 #ifdef INCLUDE_ALPHA_CHANNEL
-  dword a   = sa + (da * inv) >> 8;
-  return Color((byte)r, (byte)g, (byte)g, (byte)a);
+  dword a   = sa + ((da * inv) >> 8);
+  return Color((byte)r, (byte)g, (byte)b, (byte)a);
+#else
+  return Color((byte)r, (byte)g, (byte)b);
+#endif
+}
+
+dword BlendOver1_C(dword src, dword dst)
+{
+  // Arg1 is assumed to already be premultiplied with it's alpha.
+  // Arg1 + Arg2 * (1 - alpha);
+  dword sr  = (src & kColorRed)   >> 16,
+        sg  = (src & kColorGreen) >>  8,
+        sb  = (src & kColorBlue)  >>  0,
+        sa  = (src & kColorAlpha) >> 24,
+
+        dr  = (dst & kColorRed)   >> 16,
+        dg  = (dst & kColorGreen) >>  8,
+        db  = (dst & kColorBlue)  >>  0,
+        da  = (dst & kColorAlpha) >> 24,
+
+        inv = 255 - sa,
+
+        r   = sr + ((dr * inv) >> 8),
+        g   = sg + ((dg * inv) >> 8),
+        b   = sb + ((db * inv) >> 8);
+#ifdef INCLUDE_ALPHA_CHANNEL
+  dword a   = sa + ((da * inv) >> 8);
+  return Color((byte)r, (byte)g, (byte)b, (byte)a);
 #else
   return Color((byte)r, (byte)g, (byte)b);
 #endif
@@ -58,7 +85,7 @@ dword BlendMultiply1_C(dword src, dword dst)
         b   = (sb * db) >> 8;
 #ifdef INCLUDE_ALPHA_CHANNEL
   dword a   = (sa * da) >> 8;
-  return Color((byte)r, (byte)g, (byte)g, (byte)a);
+  return Color((byte)r, (byte)g, (byte)b, (byte)a);
 #else
   return Color((byte)r, (byte)g, (byte)b);
 #endif
@@ -86,7 +113,7 @@ dword BlendAdditive1_C(dword src, dword dst)
         b   = Min(sb + db, (dword)255);
 #ifdef INCLUDE_ALPHA_CHANNEL
   dword a   = Min(sa + da, (dword)255);
-  return Color((byte)r, (byte)g, (byte)g, (byte)a);
+  return Color((byte)r, (byte)g, (byte)b, (byte)a);
 #else
   return Color((byte)r, (byte)g, (byte)b);
 #endif
@@ -114,7 +141,7 @@ dword BlendSubtractive1_C(dword src, dword dst)
         b   = (dword)Max((int)db - (int)sb, 0);
 #ifdef INCLUDE_ALPHA_CHANNEL
   dword a   = (dword)Max((int)da - (int)sa, 0);
-  return Color((byte)r, (byte)g, (byte)g, (byte)a);
+  return Color((byte)r, (byte)g, (byte)b, (byte)a);
 #else
   return Color((byte)r, (byte)g, (byte)b);
 #endif
@@ -142,7 +169,7 @@ dword BlendScreen1_C(dword src, dword dst)
         b   = Clamp((int)(sb + db - ((sb * db) >> 8)), (int)0, (int)255);
 #ifdef INCLUDE_ALPHA_CHANNEL
   dword a   = Clamp((int)(sa + da - ((sa * da) >> 8)), (int)0, (int)255);
-  return Color((byte)r, (byte)g, (byte)g, (byte)a);
+  return Color((byte)r, (byte)g, (byte)b, (byte)a);
 #else
   return Color((byte)r, (byte)g, (byte)b);
 #endif
@@ -171,7 +198,7 @@ dword BlendLighten1_C(dword src, dword dst)
         b   = Max(sb, db);
 #ifdef INCLUDE_ALPHA_CHANNEL
   dword a   = Max(sa, da);
-  return Color((byte)r, (byte)g, (byte)g, (byte)a);
+  return Color((byte)r, (byte)g, (byte)b, (byte)a);
 #else
   return Color((byte)r, (byte)g, (byte)b);
 #endif
@@ -200,7 +227,7 @@ dword BlendDarken1_C(dword src, dword dst)
         b   = Min(sb, db);
 #ifdef INCLUDE_ALPHA_CHANNEL
   dword a   = Min(sa, da);
-  return Color((byte)r, (byte)g, (byte)g, (byte)a);
+  return Color((byte)r, (byte)g, (byte)b, (byte)a);
 #else
   return Color((byte)r, (byte)g, (byte)b);
 #endif
@@ -210,6 +237,12 @@ void BlendNormal_C(dword *src, dword *dst, dword num)
 {
   for (dword i = 0; i < num; ++i)
     dst[i] = BlendNormal1_C(src[i], dst[i]);
+}
+
+void BlendOver_C(dword *src, dword *dst, dword num)
+{
+  for (dword i = 0; i < num; ++i)
+    dst[i] = BlendOver1_C(src[i], dst[i]);
 }
 
 void BlendMultiply_C(dword *src, dword *dst, dword num)
@@ -253,6 +286,7 @@ BlendFunc_t BlendFunc(BlendType t)
   switch (t)
   {
   case kBlend_Normal:       return BlendNormal;
+  case kBlend_Over:         return BlendOver;
   case kBlend_Multiply:     return BlendMultiply;
   case kBlend_Additive:     return BlendAdditive;
   case kBlend_Subtractive:  return BlendSubtractive;
@@ -269,6 +303,7 @@ const char *BlendFuncName(BlendType t)
   switch (t)
   {
   case kBlend_Normal:       return "Normal";
+  case kBlend_Over:         return "Over";
   case kBlend_Multiply:     return "Multiply";
   case kBlend_Additive:     return "Additive";
   case kBlend_Subtractive:  return "Subtractive";
