@@ -23,7 +23,7 @@ dword BlendNormal1_C(dword src, dword dst)
         da  = (dst & kColorAlpha) >> 24,
 #endif
 
-        inv = 255 - sa,
+        inv = 256 - sa,
 
         r   = (sr * sa + dr * inv) >> 8,
         g   = (sg * sa + dg * inv) >> 8,
@@ -36,6 +36,48 @@ dword BlendNormal1_C(dword src, dword dst)
 #endif
 }
 
+#if 1
+// src is assumed to already be premultiplied with it's alpha.
+// src + dst * (1 - alpha);
+dword BlendOver1_C(dword src, dword dst)
+{
+  // Get 1.0 - source.alpha into a variable.
+  // Notice the we use 256 and not 255 here to maintain a bit of precision.
+  dword inv = 256 - (src >> 24);
+
+  // Extract the double components of the source pixel.
+  dword src_rb =  src & 0x00ff00ff;
+  dword src_ag = (src & 0xff00ff00) >> 8;
+
+  // Extract the double component of the destination pixel.
+  dword dst_rb =  dst & 0x00ff00ff;
+  dword dst_ag = (dst & 0xff00ff00) >> 8;
+
+  // Multiply the destination pixel with the alpha value.
+  // The result is a 16 bit value, but since we only have a byte of precision
+  // for each color channel in the pixel we'll keep operating on the higher
+  // byte and later bit mask out the lower byte.
+  dword rb = dst_rb * inv;
+  dword ag = dst_ag * inv;
+
+  // The source pixel is premultiplied so no multiplication is needed
+  // here, only that we shift it up to be in the same position as the
+  // destination pixel, then add it.
+  rb += (src_rb << 8);
+  ag += (src_ag << 8);
+
+  // To get the final result we need to shift down the red and blue component
+  // one byte.
+  rb >>= 8;
+
+  // Mask out the channels.
+  rb &= 0x00ff00ff;
+  ag &= 0xff00ff00;
+
+  // And we get the final result by Or:ing them together.
+  return ag | rb;
+}
+#else
 dword BlendOver1_C(dword src, dword dst)
 {
   // Arg1 is assumed to already be premultiplied with it's alpha.
@@ -50,7 +92,7 @@ dword BlendOver1_C(dword src, dword dst)
         db  = (dst & kColorBlue)  >>  0,
         da  = (dst & kColorAlpha) >> 24,
 
-        inv = 255 - sa,
+        inv = 256 - sa,
 
         r   = sr + ((dr * inv) >> 8),
         g   = sg + ((dg * inv) >> 8),
@@ -62,6 +104,7 @@ dword BlendOver1_C(dword src, dword dst)
   return Color((byte)r, (byte)g, (byte)b);
 #endif
 }
+#endif
 
 dword BlendMultiply1_C(dword src, dword dst)
 {
