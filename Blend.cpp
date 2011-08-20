@@ -282,11 +282,58 @@ void BlendNormal_C(dword *src, dword *dst, dword num)
     dst[i] = BlendNormal1_C(src[i], dst[i]);
 }
 
+#if 1
+void BlendOver_C(dword *s, dword *d, dword num)
+{
+  while (num--)
+  {
+    dword src = *s;
+    dword dst = *d;
+
+    // Get 1.0 - source.alpha into a variable.
+    // Notice the we use 256 and not 255 here to maintain a bit of precision.
+    dword inv = 256 - (src >> 24);
+
+    // Extract the double components of the source pixel.
+    dword src_rb =  src & 0x00ff00ff;
+    dword src_ag = (src & 0xff00ff00) >> 8;
+
+    // Extract the double component of the destination pixel.
+    dword dst_rb =  dst & 0x00ff00ff;
+    dword dst_ag = (dst & 0xff00ff00) >> 8;
+
+    // Multiply the destination pixel with the alpha value.
+    // The result is a 16 bit value, but since we only have a byte of precision
+    // for each color channel in the pixel we'll keep operating on the higher
+    // byte and later bit mask out the lower byte.
+    dword rb = dst_rb * inv;
+    dword ag = dst_ag * inv;
+
+    // The source pixel is premultiplied so no multiplication is needed
+    // here, only that we shift it up to be in the same position as the
+    // destination pixel, then add it.
+    rb += (src_rb << 8);
+    ag += (src_ag << 8);
+
+    // To get the final result we need to shift down the red and blue component
+    // one byte.
+    rb >>= 8;
+
+    // Mask out the channels.
+    rb &= 0x00ff00ff;
+    ag &= 0xff00ff00;
+
+    // And we get the final result by Or:ing them together.
+    *d++ = ag | rb;
+  }
+}
+#else
 void BlendOver_C(dword *src, dword *dst, dword num)
 {
   for (dword i = 0; i < num; ++i)
     dst[i] = BlendOver1_C(src[i], dst[i]);
 }
+#endif
 
 void BlendMultiply_C(dword *src, dword *dst, dword num)
 {

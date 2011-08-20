@@ -202,6 +202,7 @@ static void TestBlendedBlit(real timePassed)
 static void TestAlphaBlend(real timePassed)
 {
   Blit(textureAlphaBackground, 0, 0);
+  Blit(textureAlphaOver, 512, 0);
   BlitBlend(textureAlphaOver, 128, 0, BlendFunc(kBlend_Over));
 }
 
@@ -283,32 +284,32 @@ bool InitTestSuite()
   //texture3.Resize(512, 512);
   //texture4.Resize(512, 512);
 
+  // Create a background image split into 4 equal rectangle with clear Red, Green, Blue and White colors.
   textureAlphaBackground = new Image(512, 512);
-  for (int y = 0; y < 512; ++y)
-    for (int x = 0; x < 512; ++x)
-    {
-      dword *dst = textureAlphaBackground->data + x + y * 512;
-      if (x < 256)
-      {
-        if (y < 256)
-          *dst = kColorRed;
-        else
-          *dst = kColorBlue;
-      }
-      else
-      {
-        if (y < 256)
-          *dst = kColorGreen;
-        else
-          *dst = kColorWhite;
-      }
-    }
-
-  textureAlphaOver = new Image(256, 512);
-  for (int y = 0; y < 512; ++y)
+  dword hw = textureAlphaBackground->width / 2;
+  dword hh = textureAlphaBackground->height / 2;
+  for (int y = 0; y < hh; ++y)
   {
-    dword *dst = textureAlphaOver->data + 128 + y * 256;
-    MemSet32(dst, Color(0, 0, 0, (byte)(y / 2)), 256);
+    dword *dst = textureAlphaBackground->data + y * textureAlphaBackground->width;
+
+    MemSet32(dst,       0xffff0000, hw);
+    MemSet32(dst + hw,  0xff00ff00, hw);
+  }
+  for (int y = hh; y < textureAlphaBackground->height; ++y)
+  {
+    dword *dst = textureAlphaBackground->data + y * textureAlphaBackground->width;
+
+    MemSet32(dst,       0xff0000ff, hw);
+    MemSet32(dst + hw,  0xffffffff, hw);
+  }
+
+  // Create an alpha image that is black with a linear gradient alpha value.
+  textureAlphaOver = new Image(256, 512);
+  for (int y = 0; y < textureAlphaOver->height; ++y)
+  {
+    dword *dst = textureAlphaOver->data + y * textureAlphaOver->width;
+    dword c = Color(0, 0, 0, (byte)(y / 2));
+    MemSet32(dst, c, textureAlphaOver->width);
   }
 
   return true;

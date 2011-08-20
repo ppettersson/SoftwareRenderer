@@ -1,5 +1,6 @@
 ; Exported functions
 global _BlendNormal1_MMX
+global _BlendOver1_MMX
 global _BlendMultiply1_MMX
 global _BlendAdditive1_MMX
 global _BlendSubtractive1_MMX
@@ -7,6 +8,7 @@ global _BlendScreen1_MMX
 ;global _BlendLighten1_MMX
 ;global _BlendDarken1_MMX
 global _BlendNormal_MMX
+global _BlendOver_MMX
 global _BlendMultiply_MMX
 global _BlendAdditive_MMX
 global _BlendSubtractive_MMX
@@ -35,6 +37,30 @@ section .text
   ; Restore stack frame and return to callee.
   pop         ebp
   ret
+%endmacro
+
+; Calculate 256 - src.alpha and then duplicate this into four words in an mmx register
+;
+; %1 = dword ptr, the pixel to grab the alpha value from, e.g. "esi"
+; The result will be left in mm4
+;
+; eax, ebx and mm5 will be clobbered.
+;
+%macro ExpandOneMinusAlpha 1
+  ; Get one minus src0.alpha into a word.
+  mov         eax, 0x0100       ; 256
+  mov         ebx, [%1]
+  shr         ebx, 24
+  sub         eax, ebx          ; eax = 256 - src0.alpha
+
+  ; Duplicate the word four times into a 64 bit register.
+  mov         ebx, eax
+  shl         ebx, 16
+  or          eax, ebx          ; eax = [256-srca][256-srca]
+  movd        mm4, eax
+  movq        mm5, mm4
+  psllq       mm5, 32
+  por         mm4, mm5          ; mm4 = [256-srca][256-srca][256-srca][256-srca]
 %endmacro
 
 
@@ -90,6 +116,74 @@ _BlendNormal1_MMX:
   psrlw       mm1, 8
 
   ; mm2 = destination pixel * (1 - source alpha)
+  pmullw      mm2, mm4
+  psrlw       mm2, 8
+
+  ; Add the source and destination together.
+  paddusw     mm1, mm2
+
+  ; Pack it again.
+  packuswb    mm1, mm0
+
+  ; Store the result in eax.
+  movd        eax, mm1
+
+  ; Restore clobbered register.
+  pop         ebx
+
+  ; Restore stack frame and return to callee.
+  pop         ebp
+  ret
+
+
+; Arg1 + Arg2 * (1 - alpha)
+;
+; dword BlendOver1_MMX(dword src, dword dst)
+%define src   ebp + 8
+%define dst   ebp + 12
+align 16
+_BlendOver1_MMX:
+  ; Set up stack frame.
+  push        ebp
+  mov         ebp, esp
+
+  ; Save away registers.
+  push        ebx
+
+  pxor        mm0, mm0          ; zero
+
+  ; Unpack source pixel to a word per component.
+  movd        mm1, [src]
+  punpcklbw   mm1, mm0
+
+  ; Unpack destination pixel to a word per component.
+  movd        mm2, [dst]
+  punpcklbw   mm2, mm0
+
+  ; Extract the alpha value in the source ARGB pixel and expand it into all four channels.
+  ; src_alpha  = src & 0xff000000
+  ; src_alpha |= src_alpha >> 8
+  ; src_alpha |= src_alpha >> 16
+  mov         eax, [src]
+  and         eax, 0xff000000   ; mask off RGB so we only have the alpha. eax = AA000000
+  mov         ebx, eax
+  shr         ebx, 8            ; ebx = 00AA0000
+  or          eax, ebx          ; eax = AAAA0000
+  mov         ebx, eax
+  shr         ebx, 16           ; ebx = 0000AAAA
+  or          eax, ebx          ; eax = AAAAAAAA
+
+  movd        mm3, eax          ; mm3 = source alpha
+
+  ; Unpack one minus source alpha in all components to words.
+  ; ToDo: Ideally we'd use 256 not 255 here.
+  pcmpeqw     mm4, mm4          ; mm4 = ff ff ff ff ff ff ff ff
+  psubusb     mm4, mm3          ; mm4 = ff - source alpha
+
+  ; Unpack the (1 - source alpha) to words.
+  punpcklbw   mm4, mm0
+
+  ; mm2 = destination pixel * (ff - source alpha)
   pmullw      mm2, mm4
   psrlw       mm2, 8
 
@@ -474,6 +568,89 @@ _BlendNormal_MMX:
   movd        [edi], mm1
 
 BlendNormal_MMX_Done:
+  epilogue
+
+
+; void BlendOver_MMX(dword *src, dword *dst, dword num)
+%define src   ebp + 8
+%define dst   ebp + 12
+%define num   ebp + 16
+align 16
+_BlendOver_MMX:
+  prologue
+
+  ; Get the arguments into registers.
+  mov         esi, [src]
+  mov         edi, [dst]
+  mov         ecx, [num]
+
+  ; We'll work in 64 bit so we need to special case the last pixel if it's odd.
+  mov         edx, ecx
+  and         edx, 1
+
+  ; num /= 2
+  shr         ecx, 1
+
+  pxor        mm0, mm0          ; mm0 = zero
+
+  ; The inner loop that does the multiply, 2 pixels at a time.
+.loop
+  ; Grab the source pixels.
+  movq        mm1, [esi]        ; mm1 = [src0][src1]
+
+  ; Grab the destination pixels and unpack to a word per component.
+  movq        mm2, [edi]        ; mm2 = [dst0][dst1]
+  movq        mm3, mm2          ; mm3 = [dst0][dst1]
+  punpcklbw   mm2, mm0          ; mm2 = [dst0]
+  punpckhbw   mm3, mm0          ; mm3 = [dst1]
+
+  ; mm4 = [256-srca][256-srca][256-srca][256-srca]
+  ExpandOneMinusAlpha esi
+
+  ; Multiply dst0 with one minus src alpha.
+  ; Then shift down the result to bytes again.
+  pmullw      mm2, mm4
+  psrlw       mm2, 8
+
+  ; mm4 = [256-srca][256-srca][256-srca][256-srca]
+  ExpandOneMinusAlpha (esi + 4)
+
+  ; Multiply dst1 with one minus src alpha.
+  ; Then shift down the result to bytes again.
+  pmullw      mm3, mm4
+  psrlw       mm3, 8
+
+  ; Pack dst0 and dst1 back into a 64 bit register.
+  packuswb    mm2, mm3
+
+  ; Add with the source pixels.
+  paddusb     mm1, mm2
+
+  movq        [edi], mm1        ; Copy the 64 bit result back into memory.
+
+  add         edi, 8
+  add         esi, 8
+
+  dec         ecx
+  jnz         .loop
+
+  ; Handle the extra odd pixel if there was one.
+  cmp         edx, 0
+  jz          BlendOver_MMX_Done
+
+  ; Only the lower 32 bits of the mmx registers are used.
+  movd        mm1, [esi]
+  movd        mm2, [edi]
+  punpcklbw   mm2, mm0
+  ExpandOneMinusAlpha esi
+  pmullw      mm2, mm4
+  psrlw       mm2, 8
+  packuswb    mm2, mm0
+  paddusb     mm1, mm2
+
+  movd        [edi], mm1
+
+BlendOver_MMX_Done:
   epilogue
 
 

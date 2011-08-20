@@ -76,7 +76,7 @@ extern void BlendDarken_C         (dword *src, dword *dst, dword num);
 // MMX versions.
 extern "C" {
 extern dword BlendNormal1_MMX     (dword src, dword dst);
-//extern dword BlendOver1_MMX     (dword src, dword dst);
+extern dword BlendOver1_MMX     (dword src, dword dst);
 extern dword BlendMultiply1_MMX   (dword src, dword dst);
 extern dword BlendAdditive1_MMX   (dword src, dword dst);
 extern dword BlendSubtractive1_MMX(dword src, dword dst);
@@ -122,7 +122,7 @@ void SetupDispatchTable()
   if (cpuFeatures & kCPU_MMX)
   {
     BlendNormal1      = BlendNormal1_MMX;
-    //BlendOver1        = BlendOver1_MMX;
+    BlendOver1        = BlendOver1_MMX;
     BlendMultiply1    = BlendMultiply1_MMX;
     BlendAdditive1    = BlendAdditive1_MMX;
     BlendSubtractive1 = BlendSubtractive1_MMX;
@@ -130,7 +130,7 @@ void SetupDispatchTable()
     //BlendLighten1     = BlendLighten1_MMX;
     //BlendDarken1      = BlendDarken1_MMX;
     BlendNormal       = BlendNormal_MMX;
-    //BlendOver         = BlendOver_MMX;
+    BlendOver         = BlendOver_MMX;
     BlendMultiply     = BlendMultiply_MMX;
     BlendAdditive     = BlendAdditive_MMX;
     BlendSubtractive  = BlendSubtractive_MMX;

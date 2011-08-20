@@ -94,7 +94,7 @@
   <ItemGroup>
     <ClCompile Include="AlignedAlloc.cpp" />
     <ClCompile Include="Blend.cpp">
-      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NoListing</AssemblerOutput>
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AssemblyAndSourceCode</AssemblerOutput>
     </ClCompile>
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="CPU.cpp" />
