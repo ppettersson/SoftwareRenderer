@@ -191,6 +191,7 @@ extern void (*BlendDarken)(dword *src, dword *dst, dword num);
 
 // Leave mmx mode to restore floating point functionality.
 // This must be called after any of the Blend functions.
+// ToDo: This is for MMX only...
 #if defined(USE_INLINE_ASM)
 inline void BlendEnd()  { __asm emms }
 #else

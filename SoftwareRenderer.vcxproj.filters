@@ -109,5 +109,8 @@
     <YASM Include="Blend_mmx.asm">
       <Filter>SoftwareRenderer\ImagePrimitives</Filter>
     </YASM>
+    <YASM Include="Blend_sse2.asm">
+      <Filter>SoftwareRenderer\ImagePrimitives</Filter>
+    </YASM>
   </ItemGroup>
 </Project>

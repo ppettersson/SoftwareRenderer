@@ -7,7 +7,6 @@
 // that work on all the channels at the same time.
 #define INCLUDE_ALPHA_CHANNEL
 
-
 dword BlendNormal1_C(dword src, dword dst)
 {
   // Arg1 * alpha + Arg2 * (1 - alpha)
@@ -282,7 +281,7 @@ void BlendNormal_C(dword *src, dword *dst, dword num)
     dst[i] = BlendNormal1_C(src[i], dst[i]);
 }
 
-#if 1
+#if 0
 void BlendOver_C(dword *s, dword *d, dword num)
 {
   while (num--)

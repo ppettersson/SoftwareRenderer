@@ -91,6 +91,8 @@ extern void BlendSubtractive_MMX  (dword *src, dword *dst, dword num);
 //extern void BlendScreen_MMX       (dword *src, dword *dst, dword num);
 //extern void BlendLighten_MMX      (dword *src, dword *dst, dword num);
 //extern void BlendDarken_MMX       (dword *src, dword *dst, dword num);
+
+extern void BlendOver_SSE2        (dword *src, dword *dst, dword num);
 }
 #endif // USE_ASM
 
@@ -137,6 +139,11 @@ void SetupDispatchTable()
     //BlendScreen       = BlendScreen_MMX;
     //BlendLighten      = BlendLighten_MMX;
     //BlendDarken       = BlendDarken_MMX;
+  }
+
+  if (cpuFeatures & kCPU_SSE2)
+  {
+    BlendOver         = BlendOver_SSE2;
   }
 #endif // USE_ASM
 }

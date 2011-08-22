@@ -2,6 +2,9 @@
   - Need to remove all inline asm first.
   - Android / iOS versions?
 
+- emms is problematic, it's only used for mmx, should we just take the hit and insert it where it's needed?
+  Then it'll hit extra hard for functions that split up processing per line etc.
+
 - Go through the blend modes and verify that they are actually correct, seems to be some issues with some of them.
   - Finish the mmx blend code: BlendLighten1, BlendDarken1, BlendScreen, BlendLighten, BlendDarken.
   - Is it possible to do Max(/Min/Abs)?
