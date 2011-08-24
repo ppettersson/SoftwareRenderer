@@ -145,8 +145,8 @@ BlendOver_SSE2_HandleLeftOvers:
 
   ; Shift previous pixel up a step if there was one.
   ; Note that these shift operations work on whole bytes, not bits.
-  pslldq       xmm1, 4
-  pslldq       xmm2, 4
+  pslldq      xmm1, 4
+  pslldq      xmm2, 4
   ; Merge the result from previous pixels.
   por         xmm1, xmm3
   por         xmm2, xmm4
@@ -170,7 +170,7 @@ BlendOver_SSE2_HandleLeftOvers:
   movd        [edi], xmm1
 
   ; Shift previous pixel down a step if there was one.
-  psrldq       xmm1, 4
+  psrldq      xmm1, 4
 
   dec         ecx
   jnz         .loop2
