@@ -109,7 +109,7 @@
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Misc.cpp" />
+    <ClCompile Include="Mem.cpp" />
     <ClCompile Include="PlatformWin32.cpp" />
     <ClCompile Include="ScanConvert.cpp" />
     <ClCompile Include="SoftwareRenderer.cpp" />
@@ -135,6 +135,8 @@
     </YASM>
     <None Include="ToDo.txt" />
     <YASM Include="Blend_sse2.asm" />
+    <YASM Include="Mem_mmx.asm" />
+    <YASM Include="Mem_sse2.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

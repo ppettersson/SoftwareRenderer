@@ -9,6 +9,7 @@
 
 #define USE_ASM                   // Linked in yasm files.
 
+#include <memory.h>               // The system memcpy is fast enough.
 
 // -- Compiler warnings -------------------------------------------------------
 
@@ -119,13 +120,9 @@ T Clamp(const T &x, const T &min, const T &max)
     return x;
 }
 
-#ifdef USE_INLINE_ASM
-void MemCpy(void *dst, const void *src, size_t count);
-void MemSet32(void *dst, dword src, size_t count);
-#else // USE_INLINE_ASM
-#include <memory.h>
+//extern void (*MemCpy)(void *dst, const void *src, size_t count);
 #define MemCpy  memcpy
-#endif // USE_INLINE_ASM
+extern void (*MemSet32)(void *dst, dword src, size_t count);
 
 #define ASSERT(x)       { if (!(x)) { __asm int 3 } }
 #define ASSERT_ONCE(x)  { static bool once = true; if (once) { once = false; ASSERT(x); } }

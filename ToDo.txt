@@ -9,6 +9,8 @@
   - Finish the mmx blend code: BlendLighten1, BlendDarken1, BlendScreen, BlendLighten, BlendDarken.
   - Is it possible to do Max(/Min/Abs)?
 
+- Study how msvcrt's memcpy align memory for sse2.
+- Remove pushad/popad, too slow and too many registers.
 - Finish the new triangle renderer, half space method.
 - Separate utility library
 - 64 bit mode?

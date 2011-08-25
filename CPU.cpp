@@ -1,5 +1,6 @@
 #include "SoftwareRenderer.h"
 #include "CPU.h"
+//#include <memory.h>
 
 enum CPU_Features
 {
@@ -55,6 +56,8 @@ dword GetCpuFeatures()
 }
 
 // C versions.
+//extern void MemCpy_C              (void *dst, const void *src, size_t count);
+extern void MemSet32_C            (void *dst, dword src, size_t count);
 extern dword BlendNormal1_C       (dword src, dword dst);
 extern dword BlendOver1_C         (dword src, dword dst);
 extern dword BlendMultiply1_C     (dword src, dword dst);
@@ -75,8 +78,10 @@ extern void BlendDarken_C         (dword *src, dword *dst, dword num);
 #ifdef USE_ASM
 // MMX versions.
 extern "C" {
+//extern void MemCpy_MMX            (void *dst, const void *src, size_t count);
+extern void MemSet32_MMX          (void *dst, dword src, size_t count);
 extern dword BlendNormal1_MMX     (dword src, dword dst);
-extern dword BlendOver1_MMX     (dword src, dword dst);
+extern dword BlendOver1_MMX       (dword src, dword dst);
 extern dword BlendMultiply1_MMX   (dword src, dword dst);
 extern dword BlendAdditive1_MMX   (dword src, dword dst);
 extern dword BlendSubtractive1_MMX(dword src, dword dst);
@@ -92,28 +97,32 @@ extern void BlendSubtractive_MMX  (dword *src, dword *dst, dword num);
 //extern void BlendLighten_MMX      (dword *src, dword *dst, dword num);
 //extern void BlendDarken_MMX       (dword *src, dword *dst, dword num);
 
+//extern void MemCpy_SSE2           (void *dst, const void *src, size_t count);
+extern void MemSet32_SSE2         (void *dst, dword src, size_t count);
 extern void BlendOver_SSE2        (dword *src, dword *dst, dword num);
 }
 #endif // USE_ASM
 
 
 // The dispatch table.
-dword (*BlendNormal1)       (dword src, dword dst)              = BlendNormal1_C;
-dword (*BlendOver1)         (dword src, dword dst)              = BlendOver1_C;
-dword (*BlendMultiply1)     (dword src, dword dst)              = BlendMultiply1_C;
-dword (*BlendAdditive1)     (dword src, dword dst)              = BlendAdditive1_C;
-dword (*BlendSubtractive1)  (dword src, dword dst)              = BlendSubtractive1_C;
-dword (*BlendScreen1)       (dword src, dword dst)              = BlendScreen1_C;
-dword (*BlendLighten1)      (dword src, dword dst)              = BlendLighten1_C;
-dword (*BlendDarken1)       (dword src, dword dst)              = BlendDarken1_C;
-void  (*BlendNormal)        (dword *src, dword *dst, dword num) = BlendNormal_C;
-void  (*BlendOver)          (dword *src, dword *dst, dword num) = BlendOver_C;
-void  (*BlendMultiply)      (dword *src, dword *dst, dword num) = BlendMultiply_C;
-void  (*BlendAdditive)      (dword *src, dword *dst, dword num) = BlendAdditive_C;
-void  (*BlendSubtractive)   (dword *src, dword *dst, dword num) = BlendSubtractive_C;
-void  (*BlendScreen)        (dword *src, dword *dst, dword num) = BlendScreen_C;
-void  (*BlendLighten)       (dword *src, dword *dst, dword num) = BlendLighten_C;
-void  (*BlendDarken)        (dword *src, dword *dst, dword num) = BlendDarken_C;
+//void  (*MemCpy)             (void *dst, const void *src, size_t count)  = memcpy; //MemCpy_C;
+void  (*MemSet32)           (void *dst, dword src, size_t count)        = MemSet32_C;
+dword (*BlendNormal1)       (dword src, dword dst)                      = BlendNormal1_C;
+dword (*BlendOver1)         (dword src, dword dst)                      = BlendOver1_C;
+dword (*BlendMultiply1)     (dword src, dword dst)                      = BlendMultiply1_C;
+dword (*BlendAdditive1)     (dword src, dword dst)                      = BlendAdditive1_C;
+dword (*BlendSubtractive1)  (dword src, dword dst)                      = BlendSubtractive1_C;
+dword (*BlendScreen1)       (dword src, dword dst)                      = BlendScreen1_C;
+dword (*BlendLighten1)      (dword src, dword dst)                      = BlendLighten1_C;
+dword (*BlendDarken1)       (dword src, dword dst)                      = BlendDarken1_C;
+void  (*BlendNormal)        (dword *src, dword *dst, dword num)         = BlendNormal_C;
+void  (*BlendOver)          (dword *src, dword *dst, dword num)         = BlendOver_C;
+void  (*BlendMultiply)      (dword *src, dword *dst, dword num)         = BlendMultiply_C;
+void  (*BlendAdditive)      (dword *src, dword *dst, dword num)         = BlendAdditive_C;
+void  (*BlendSubtractive)   (dword *src, dword *dst, dword num)         = BlendSubtractive_C;
+void  (*BlendScreen)        (dword *src, dword *dst, dword num)         = BlendScreen_C;
+void  (*BlendLighten)       (dword *src, dword *dst, dword num)         = BlendLighten_C;
+void  (*BlendDarken)        (dword *src, dword *dst, dword num)         = BlendDarken_C;
 
 
 void SetupDispatchTable()
@@ -123,6 +132,8 @@ void SetupDispatchTable()
 
   if (cpuFeatures & kCPU_MMX)
   {
+    //MemCpy            = MemCpy_MMX;
+    MemSet32          = MemSet32_MMX;
     BlendNormal1      = BlendNormal1_MMX;
     BlendOver1        = BlendOver1_MMX;
     BlendMultiply1    = BlendMultiply1_MMX;
@@ -143,6 +154,8 @@ void SetupDispatchTable()
 
   if (cpuFeatures & kCPU_SSE2)
   {
+    //MemCpy            = MemCpy_SSE2;
+    MemSet32          = MemSet32_SSE2;
     BlendOver         = BlendOver_SSE2;
   }
 #endif // USE_ASM

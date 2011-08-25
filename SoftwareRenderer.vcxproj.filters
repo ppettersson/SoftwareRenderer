@@ -28,9 +28,6 @@
     <ClCompile Include="FrameBuffer.cpp">
       <Filter>SoftwareRenderer\FrameBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="Misc.cpp">
-      <Filter>SoftwareRenderer\Misc</Filter>
-    </ClCompile>
     <ClCompile Include="DrawLine.cpp">
       <Filter>SoftwareRenderer\DrawPrimitives</Filter>
     </ClCompile>
@@ -77,6 +74,9 @@
     <ClCompile Include="PlatformWin32.cpp">
       <Filter>SoftwareRenderer\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="Mem.cpp">
+      <Filter>SoftwareRenderer\Misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SoftwareRenderer.h">
@@ -111,6 +111,12 @@
     </YASM>
     <YASM Include="Blend_sse2.asm">
       <Filter>SoftwareRenderer\ImagePrimitives</Filter>
+    </YASM>
+    <YASM Include="Mem_mmx.asm">
+      <Filter>SoftwareRenderer\Misc</Filter>
+    </YASM>
+    <YASM Include="Mem_sse2.asm">
+      <Filter>SoftwareRenderer\Misc</Filter>
     </YASM>
   </ItemGroup>
 </Project>
