@@ -97,6 +97,7 @@
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AssemblyAndSourceCode</AssemblerOutput>
     </ClCompile>
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="Convert.cpp" />
     <ClCompile Include="CPU.cpp" />
     <ClCompile Include="CrossFade.cpp" />
     <ClCompile Include="DrawLine.cpp">
@@ -135,6 +136,7 @@
     </YASM>
     <None Include="ToDo.txt" />
     <YASM Include="Blend_sse2.asm" />
+    <YASM Include="Convert_ssse3.asm" />
     <YASM Include="Mem_mmx.asm" />
     <YASM Include="Mem_sse2.asm" />
   </ItemGroup>

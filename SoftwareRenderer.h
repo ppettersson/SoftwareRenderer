@@ -234,5 +234,8 @@ void StretchBlitBiLinear(dword *dst, dword dstStride,
                          dword *src, dword srcStride, 
                          dword srcWidth, dword srcHeight);
 
+// -- Pixel format converters -------------------------------------------------
+
+extern void (*ConvertRGBAtoBGRA)(dword *dst, dword *src, dword num);
 
 #endif // SOFTWARE_RENDERER_H

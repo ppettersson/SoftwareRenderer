@@ -38,7 +38,7 @@ dword GetCpuFeatures()
 
   if (c & (1 << 0))
     cpuFeatures |= kCPU_SSE3;
-  if (c & (1 << 10))
+  if (c & (1 << 9))
     cpuFeatures |= kCPU_SSSE3;
   if (c & (1 << 20))
     cpuFeatures |= kCPU_SSE4_1;
@@ -58,6 +58,7 @@ dword GetCpuFeatures()
 // C versions.
 //extern void MemCpy_C              (void *dst, const void *src, size_t count);
 extern void MemSet32_C            (void *dst, dword src, size_t count);
+extern void ConvertRGBAtoBGRA_C   (dword *dst, dword *src, dword num);
 extern dword BlendNormal1_C       (dword src, dword dst);
 extern dword BlendOver1_C         (dword src, dword dst);
 extern dword BlendMultiply1_C     (dword src, dword dst);
@@ -78,28 +79,30 @@ extern void BlendDarken_C         (dword *src, dword *dst, dword num);
 #ifdef USE_ASM
 // MMX versions.
 extern "C" {
-//extern void MemCpy_MMX            (void *dst, const void *src, size_t count);
-extern void MemSet32_MMX          (void *dst, dword src, size_t count);
-extern dword BlendNormal1_MMX     (dword src, dword dst);
-extern dword BlendOver1_MMX       (dword src, dword dst);
-extern dword BlendMultiply1_MMX   (dword src, dword dst);
-extern dword BlendAdditive1_MMX   (dword src, dword dst);
-extern dword BlendSubtractive1_MMX(dword src, dword dst);
-extern dword BlendScreen1_MMX     (dword src, dword dst);
-//extern dword BlendLighten1_MMX    (dword src, dword dst);
-//extern dword BlendDarken1_MMX     (dword src, dword dst);
-extern void BlendNormal_MMX       (dword *src, dword *dst, dword num);
-extern void BlendOver_MMX         (dword *src, dword *dst, dword num);
-extern void BlendMultiply_MMX     (dword *src, dword *dst, dword num);
-extern void BlendAdditive_MMX     (dword *src, dword *dst, dword num);
-extern void BlendSubtractive_MMX  (dword *src, dword *dst, dword num);
-//extern void BlendScreen_MMX       (dword *src, dword *dst, dword num);
-//extern void BlendLighten_MMX      (dword *src, dword *dst, dword num);
-//extern void BlendDarken_MMX       (dword *src, dword *dst, dword num);
+//extern void MemCpy_MMX              (void *dst, const void *src, size_t count);
+extern void MemSet32_MMX            (void *dst, dword src, size_t count);
+extern dword BlendNormal1_MMX       (dword src, dword dst);
+extern dword BlendOver1_MMX         (dword src, dword dst);
+extern dword BlendMultiply1_MMX     (dword src, dword dst);
+extern dword BlendAdditive1_MMX     (dword src, dword dst);
+extern dword BlendSubtractive1_MMX  (dword src, dword dst);
+extern dword BlendScreen1_MMX       (dword src, dword dst);
+//extern dword BlendLighten1_MMX      (dword src, dword dst);
+//extern dword BlendDarken1_MMX       (dword src, dword dst);
+extern void BlendNormal_MMX         (dword *src, dword *dst, dword num);
+extern void BlendOver_MMX           (dword *src, dword *dst, dword num);
+extern void BlendMultiply_MMX       (dword *src, dword *dst, dword num);
+extern void BlendAdditive_MMX       (dword *src, dword *dst, dword num);
+extern void BlendSubtractive_MMX    (dword *src, dword *dst, dword num);
+//extern void BlendScreen_MMX         (dword *src, dword *dst, dword num);
+//extern void BlendLighten_MMX        (dword *src, dword *dst, dword num);
+//extern void BlendDarken_MMX         (dword *src, dword *dst, dword num);
 
-//extern void MemCpy_SSE2           (void *dst, const void *src, size_t count);
-extern void MemSet32_SSE2         (void *dst, dword src, size_t count);
-extern void BlendOver_SSE2        (dword *src, dword *dst, dword num);
+//extern void MemCpy_SSE2             (void *dst, const void *src, size_t count);
+extern void MemSet32_SSE2           (void *dst, dword src, size_t count);
+extern void BlendOver_SSE2          (dword *src, dword *dst, dword num);
+
+extern void ConvertRGBAtoBGRA_SSSE3 (dword *dst, dword *src, dword num);
 }
 #endif // USE_ASM
 
@@ -107,6 +110,7 @@ extern void BlendOver_SSE2        (dword *src, dword *dst, dword num);
 // The dispatch table.
 //void  (*MemCpy)             (void *dst, const void *src, size_t count)  = memcpy; //MemCpy_C;
 void  (*MemSet32)           (void *dst, dword src, size_t count)        = MemSet32_C;
+void  (*ConvertRGBAtoBGRA)  (dword *dst, dword *src, dword num)         = ConvertRGBAtoBGRA_C;
 dword (*BlendNormal1)       (dword src, dword dst)                      = BlendNormal1_C;
 dword (*BlendOver1)         (dword src, dword dst)                      = BlendOver1_C;
 dword (*BlendMultiply1)     (dword src, dword dst)                      = BlendMultiply1_C;
@@ -157,6 +161,11 @@ void SetupDispatchTable()
     //MemCpy            = MemCpy_SSE2;
     MemSet32          = MemSet32_SSE2;
     BlendOver         = BlendOver_SSE2;
+  }
+
+  if (cpuFeatures & kCPU_SSSE3)
+  {
+    ConvertRGBAtoBGRA = ConvertRGBAtoBGRA_SSSE3;
   }
 #endif // USE_ASM
 }
