@@ -9,7 +9,7 @@ void QuitScanConvert()
 {
   if (spans)
   {
-    delete [] spans;
+    FreeAlign(spans);
     spans = NULL;
   }
 }
@@ -18,5 +18,5 @@ void InitScanConvert()
 {
   QuitScanConvert();
 
-  spans = new Span [screenHeight];
+  spans = (Span *)AllocAlign(sizeof(Span) * screenHeight);
 }

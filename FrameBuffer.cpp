@@ -5,7 +5,6 @@ dword  screenWidth   = 0,
        screenHeight  = 0;
 
 dword *frameBuffer   = NULL;
-
 dword *clearLine     = NULL;
 
 void QuitFrameBuffer();
@@ -18,8 +17,8 @@ bool InitFrameBuffer(dword width, dword height)
   screenWidth   = width;
   screenHeight  = height;
 
-  frameBuffer = new dword [screenWidth * screenHeight];
-  clearLine   = new dword [screenWidth];
+  frameBuffer = (dword *)AllocAlign(sizeof(dword) * screenWidth * screenHeight);
+  clearLine   = (dword *)AllocAlign(sizeof(dword) * screenWidth);
 
   return true;
 }
@@ -28,12 +27,12 @@ void QuitFrameBuffer()
 {
   if (frameBuffer)
   {
-    delete [] frameBuffer;
+    FreeAlign(frameBuffer);
     frameBuffer = NULL;
   }
   if (clearLine)
   {
-    delete [] clearLine;
+    FreeAlign(clearLine);
     clearLine = NULL;
   }
 }

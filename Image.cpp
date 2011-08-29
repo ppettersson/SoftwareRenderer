@@ -51,6 +51,8 @@ Image *LoadTGA(const char *fileName)
   case 32:
     image = new Image(header.width, header.height);
     file.read((char *)image->data, image->width * image->height * sizeof(dword));
+    // ToDo: This has not been tested and it would be much cleaner and faster to use an in-place conversion routine instead.
+    //ConvertRGBAtoBGRA(image->data, image->data, image->width * image->height);
     break;
 
   case 24:
@@ -59,7 +61,7 @@ Image *LoadTGA(const char *fileName)
     {
       byte rgb[3];
       file.read((char *)rgb, 3);
-      image->data[i] = (255 << 24) | (rgb[2] << 16) | (rgb[1] << 8) | rgb[0];
+      image->data[i] = Color(rgb[2], rgb[1], rgb[0]); // Note the RGB to BGRA conversion here.
     }
     break;
 
@@ -70,7 +72,7 @@ Image *LoadTGA(const char *fileName)
   if (!(header.descriptor & 0x20)) // vertical flip
   {
     int pitch = image->width * 4;
-    byte *line = new byte [pitch];
+    byte *line = (byte *)AllocAlign(sizeof(byte) * pitch);
     byte *buffer = (byte *)image->data;
 
     for (int i = 0; i < (int)image->height / 2; i++)
@@ -87,7 +89,7 @@ Image *LoadTGA(const char *fileName)
       // Copy from temporary buffer to start of bitmap.
       MemCpy(buffer + startOffset, line, pitch);
     }
-    delete [] line;
+    FreeAlign(line);
   }
 
   return image;
@@ -130,10 +132,10 @@ void BlitBlend(Image *image, dword x, dword y, void (BlendFunc)(dword *src, dwor
 
 void Resize(Image *image, dword newWidth, dword newHeight)
 {
-  dword *newData = new dword [newWidth * newHeight];
+  dword *newData = (dword *)AllocAlign(sizeof(dword) * newWidth * newHeight);
   StretchBlitBiLinear(newData, newWidth, 0, 0, newWidth, newHeight, image->data, image->width, image->width, image->height);
 
-  delete [] image->data;
+  FreeAlign(image->data);
     
   image->width  = newWidth;
   image->height = newHeight;
