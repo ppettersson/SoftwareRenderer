@@ -63,3 +63,8 @@ int GetFpsAverage()
 {
   return fpsAverage;
 }
+
+dword GetTimeStamp()
+{
+  return timeGetTime();
+}
