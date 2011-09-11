@@ -80,6 +80,9 @@
     <ClCompile Include="Convert.cpp">
       <Filter>SoftwareRenderer\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="GetMaxValue.cpp">
+      <Filter>SoftwareRenderer\Misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SoftwareRenderer.h">
@@ -122,6 +125,9 @@
       <Filter>SoftwareRenderer\Misc</Filter>
     </YASM>
     <YASM Include="Convert_ssse3.asm">
+      <Filter>SoftwareRenderer\Misc</Filter>
+    </YASM>
+    <YASM Include="GetMaxValue_SSE2.asm">
       <Filter>SoftwareRenderer\Misc</Filter>
     </YASM>
   </ItemGroup>

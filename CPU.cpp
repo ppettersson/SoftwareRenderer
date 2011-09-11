@@ -59,6 +59,8 @@ dword GetCpuFeatures()
 //extern void MemCpy_C              (void *dst, const void *src, size_t count);
 extern void MemSet32_C            (void *dst, dword src, size_t count);
 extern void ConvertRGBAtoBGRA_C   (dword *dst, dword *src, dword num);
+extern byte GetMaxByteValue_C     (byte *data, dword num);
+extern word GetMaxWordValue_C     (word *data, dword num);
 extern dword BlendNormal1_C       (dword src, dword dst);
 extern dword BlendOver1_C         (dword src, dword dst);
 extern dword BlendMultiply1_C     (dword src, dword dst);
@@ -100,6 +102,8 @@ extern void BlendSubtractive_MMX    (dword *src, dword *dst, dword num);
 
 //extern void MemCpy_SSE2             (void *dst, const void *src, size_t count);
 extern void MemSet32_SSE2           (void *dst, dword src, size_t count);
+extern byte GetMaxByteValue_SSE2    (byte *data, dword num);
+extern word GetMaxWordValue_SSE2    (word *data, dword num);
 extern void BlendOver_SSE2          (dword *src, dword *dst, dword num);
 
 extern void ConvertRGBAtoBGRA_SSSE3 (dword *dst, dword *src, dword num);
@@ -111,6 +115,8 @@ extern void ConvertRGBAtoBGRA_SSSE3 (dword *dst, dword *src, dword num);
 //void  (*MemCpy)             (void *dst, const void *src, size_t count)  = memcpy; //MemCpy_C;
 void  (*MemSet32)           (void *dst, dword src, size_t count)        = MemSet32_C;
 void  (*ConvertRGBAtoBGRA)  (dword *dst, dword *src, dword num)         = ConvertRGBAtoBGRA_C;
+byte  (*GetMaxByteValue)    (byte *data, dword num)                     = GetMaxByteValue_C;
+word  (*GetMaxWordValue)    (word *data, dword num)                     = GetMaxWordValue_C;
 dword (*BlendNormal1)       (dword src, dword dst)                      = BlendNormal1_C;
 dword (*BlendOver1)         (dword src, dword dst)                      = BlendOver1_C;
 dword (*BlendMultiply1)     (dword src, dword dst)                      = BlendMultiply1_C;
@@ -134,32 +140,35 @@ void SetupDispatchTable()
 #ifdef USE_ASM
   dword cpuFeatures = GetCpuFeatures();
 
-  if (cpuFeatures & kCPU_MMX)
-  {
-    //MemCpy            = MemCpy_MMX;
-    MemSet32          = MemSet32_MMX;
-    BlendNormal1      = BlendNormal1_MMX;
-    BlendOver1        = BlendOver1_MMX;
-    BlendMultiply1    = BlendMultiply1_MMX;
-    BlendAdditive1    = BlendAdditive1_MMX;
-    BlendSubtractive1 = BlendSubtractive1_MMX;
-    BlendScreen1      = BlendScreen1_MMX;
-    //BlendLighten1     = BlendLighten1_MMX;
-    //BlendDarken1      = BlendDarken1_MMX;
-    BlendNormal       = BlendNormal_MMX;
-    BlendOver         = BlendOver_MMX;
-    BlendMultiply     = BlendMultiply_MMX;
-    BlendAdditive     = BlendAdditive_MMX;
-    BlendSubtractive  = BlendSubtractive_MMX;
-    //BlendScreen       = BlendScreen_MMX;
-    //BlendLighten      = BlendLighten_MMX;
-    //BlendDarken       = BlendDarken_MMX;
-  }
+  // the EMMS instruction just makes MMX support really messy...
+  //if (cpuFeatures & kCPU_MMX)
+  //{
+  //  //MemCpy            = MemCpy_MMX;
+  //  MemSet32          = MemSet32_MMX;
+  //  BlendNormal1      = BlendNormal1_MMX;
+  //  BlendOver1        = BlendOver1_MMX;
+  //  BlendMultiply1    = BlendMultiply1_MMX;
+  //  BlendAdditive1    = BlendAdditive1_MMX;
+  //  BlendSubtractive1 = BlendSubtractive1_MMX;
+  //  BlendScreen1      = BlendScreen1_MMX;
+  //  //BlendLighten1     = BlendLighten1_MMX;
+  //  //BlendDarken1      = BlendDarken1_MMX;
+  //  BlendNormal       = BlendNormal_MMX;
+  //  BlendOver         = BlendOver_MMX;
+  //  BlendMultiply     = BlendMultiply_MMX;
+  //  BlendAdditive     = BlendAdditive_MMX;
+  //  BlendSubtractive  = BlendSubtractive_MMX;
+  //  //BlendScreen       = BlendScreen_MMX;
+  //  //BlendLighten      = BlendLighten_MMX;
+  //  //BlendDarken       = BlendDarken_MMX;
+  //}
 
   if (cpuFeatures & kCPU_SSE2)
   {
-    //MemCpy            = MemCpy_SSE2;
+    //MemCpy            = MemCpy_SSE2;            // The native memcpy function is faster.
     MemSet32          = MemSet32_SSE2;
+    //GetMaxByteValue   = GetMaxByteValue_SSE2;   // Only faster if more than 32 array entries, slower for other cases.
+    GetMaxWordValue   = GetMaxWordValue_SSE2;
     BlendOver         = BlendOver_SSE2;
   }
 

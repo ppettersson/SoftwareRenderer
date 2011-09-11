@@ -108,6 +108,10 @@
     <ClCompile Include="DrawString.cpp" />
     <ClCompile Include="DrawTriangle.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="GetMaxValue.cpp">
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AssemblyAndSourceCode</AssemblerOutput>
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AssemblyAndSourceCode</AssemblerOutput>
+    </ClCompile>
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Mem.cpp" />
@@ -137,6 +141,7 @@
     <None Include="ToDo.txt" />
     <YASM Include="Blend_sse2.asm" />
     <YASM Include="Convert_ssse3.asm" />
+    <YASM Include="GetMaxValue_SSE2.asm" />
     <YASM Include="Mem_mmx.asm" />
     <YASM Include="Mem_sse2.asm" />
   </ItemGroup>

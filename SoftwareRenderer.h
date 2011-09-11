@@ -188,12 +188,12 @@ extern void (*BlendDarken)(dword *src, dword *dst, dword num);
 
 // Leave mmx mode to restore floating point functionality.
 // This must be called after any of the Blend functions.
-// ToDo: This is for MMX only...
-#if defined(USE_INLINE_ASM)
-inline void BlendEnd()  { __asm emms }
-#else
+// ToDo: This needs to be used for MMX, but it will slow down the other code paths...
+//#if defined(USE_INLINE_ASM)
+//inline void BlendEnd()  { __asm emms }
+//#else
 inline void BlendEnd()  { }
-#endif
+//#endif
 
 typedef void (*BlendFunc_t)(dword *src, dword *dst, dword num);
 
@@ -237,5 +237,10 @@ void StretchBlitBiLinear(dword *dst, dword dstStride,
 // -- Pixel format converters -------------------------------------------------
 
 extern void (*ConvertRGBAtoBGRA)(dword *dst, dword *src, dword num);
+
+// -- Misc functions ----------------------------------------------------------
+
+extern byte (*GetMaxByteValue)(byte *data, dword num);
+extern word (*GetMaxWordValue)(word *data, dword num);
 
 #endif // SOFTWARE_RENDERER_H
