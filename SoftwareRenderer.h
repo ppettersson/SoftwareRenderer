@@ -29,22 +29,22 @@ typedef float           real;
 class Point2
 {
 public:
-  dword  x, y;
+	dword  x, y;
 
-  Point2()                                      { }
-  Point2(dword _x, dword _y) : x(_x), y(_y)     { }
+	Point2()                                      { }
+	Point2(dword _x, dword _y) : x(_x), y(_y)     { }
 };
 
 class Image
 {
 public:
-  Image() : width(0), height(0), data(0)        { }
-  Image(dword w, dword h);
-  ~Image();
+	Image() : width(0), height(0), data(0)        { }
+	Image(dword w, dword h);
+	~Image();
 
-  dword  width,
-         height,
-        *data;    // Keep this data aligned for better performance.
+	dword  width,
+		height,
+		*data;    // Keep this data aligned for better performance.
 };
 
 // -- FrameBuffer -------------------------------------------------------------
@@ -85,17 +85,17 @@ inline dword Color(real red, real green, real blue)             { return Color((
 // Convert from RGBA pixel to individual real components.
 inline void Color(dword color, real &red, real &green, real &blue)
 {
-  red   = ((color & kColorRed)   >> 16) / 255.0f;
-  green = ((color & kColorGreen) >>  8) / 255.0f;
-  blue  = ((color & kColorBlue)  >>  0) / 255.0f;
+	red   = ((color & kColorRed)   >> 16) / 255.0f;
+	green = ((color & kColorGreen) >>  8) / 255.0f;
+	blue  = ((color & kColorBlue)  >>  0) / 255.0f;
 }
 
 // Convert from RGBA pixel to individual integer components.
 inline void Color(dword color, byte &red, byte &green, byte &blue)
 {
-  red   = (byte)((color & kColorRed)   >> 16);
-  green = (byte)((color & kColorGreen) >>  8);
-  blue  = (byte)((color & kColorBlue)  >>  0);
+	red   = (byte)((color & kColorRed)   >> 16);
+	green = (byte)((color & kColorGreen) >>  8);
+	blue  = (byte)((color & kColorBlue)  >>  0);
 }
 
 // Scale the color.
@@ -112,12 +112,12 @@ template <class T>  void Swap(T &a, T &b)         { T tmp = a; a = b; b = tmp; }
 template <class T>
 T Clamp(const T &x, const T &min, const T &max)
 {
-  if (x < min)
-    return min;
-  else if (x > max)
-    return max;
-  else
-    return x;
+	if (x < min)
+		return min;
+	else if (x > max)
+		return max;
+	else
+		return x;
 }
 
 //extern void (*MemCpy)(void *dst, const void *src, size_t count);
@@ -199,16 +199,16 @@ typedef void (*BlendFunc_t)(dword *src, dword *dst, dword num);
 
 enum BlendType
 {
-  kBlend_Normal,
-  kBlend_Over,
-  kBlend_Multiply,
-  kBlend_Additive,
-  kBlend_Subtractive,
-  kBlend_Screen,
-  kBlend_Lighten,
-  kBlend_Darken,
+	kBlend_Normal,
+	kBlend_Over,
+	kBlend_Multiply,
+	kBlend_Additive,
+	kBlend_Subtractive,
+	kBlend_Screen,
+	kBlend_Lighten,
+	kBlend_Darken,
 
-  kBlend_Max
+	kBlend_Max
 };
 
 BlendFunc_t BlendFunc(BlendType t);
@@ -217,22 +217,22 @@ const char *BlendFuncName(BlendType t);
 // -- CrossFade ---------------------------------------------------------------
 
 void CrossFade(dword *dst, dword stride, 
-               dword *srcA, dword *srcB,
-               dword width, dword height, dword alpha);
+	dword *srcA, dword *srcB,
+	dword width, dword height, dword alpha);
 
 // -- StretchBlit -------------------------------------------------------------
 
 void StretchBlitNearest(dword *dst, dword dstStride,
-                        dword dstX, dword dstY,
-                        dword dstWidth, dword dstHeight,
-                        dword *src, dword srcStride, 
-                        dword srcWidth, dword srcHeight);
+	dword dstX, dword dstY,
+	dword dstWidth, dword dstHeight,
+	dword *src, dword srcStride, 
+	dword srcWidth, dword srcHeight);
 
 void StretchBlitBiLinear(dword *dst, dword dstStride,
-                         dword dstX, dword dstY,
-                         dword dstWidth, dword dstHeight,
-                         dword *src, dword srcStride, 
-                         dword srcWidth, dword srcHeight);
+	dword dstX, dword dstY,
+	dword dstWidth, dword dstHeight,
+	dword *src, dword srcStride, 
+	dword srcWidth, dword srcHeight);
 
 // -- Pixel format converters -------------------------------------------------
 

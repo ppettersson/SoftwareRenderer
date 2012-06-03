@@ -19,52 +19,52 @@ static real timePassed;
 
 void InitTimer()
 {
-  timeBeginPeriod(1);
-  startTime = timeGetTime();
-  lastTime  = startTime;
+	timeBeginPeriod(1);
+	startTime = timeGetTime();
+	lastTime  = startTime;
 
-  fpsStartTime = startTime;
-  fpsNumFrames = 0;
+	fpsStartTime = startTime;
+	fpsNumFrames = 0;
 
-  fpsAverage = 0;
+	fpsAverage = 0;
 }
 
 void UpdateTimer()
 {
-    // Basic frame rate counter.
-    DWORD currentTime = timeGetTime();
+	// Basic frame rate counter.
+	DWORD currentTime = timeGetTime();
 
-    fps = 1000.0f / (currentTime - lastTime);
-    lastTime = currentTime;
+	fps = 1000.0f / (currentTime - lastTime);
+	lastTime = currentTime;
 
-    timePassed = (currentTime - startTime) / 1000.0f;
+	timePassed = (currentTime - startTime) / 1000.0f;
 
-    fpsNumFrames++;
-    if ((currentTime - fpsStartTime) > 1000)
-    {
-      fpsAverage = (int)fpsNumFrames;
+	fpsNumFrames++;
+	if ((currentTime - fpsStartTime) > 1000)
+	{
+		fpsAverage = (int)fpsNumFrames;
 
-      fpsStartTime = currentTime;
-      fpsNumFrames = 0;
-    }
+		fpsStartTime = currentTime;
+		fpsNumFrames = 0;
+	}
 }
 
 real GetTimePassed()
 {
-  return timePassed;
+	return timePassed;
 }
 
 real GetFps()
 {
-  return fps;
+	return fps;
 }
 
 int GetFpsAverage()
 {
-  return fpsAverage;
+	return fpsAverage;
 }
 
 dword GetTimeStamp()
 {
-  return timeGetTime();
+	return timeGetTime();
 }

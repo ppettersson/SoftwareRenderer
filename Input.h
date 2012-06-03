@@ -3,10 +3,10 @@
 
 enum KeyCode
 {
-  kKey_Left,
-  kKey_Right,
+	kKey_Left,
+	kKey_Right,
 
-  kKey_Last
+	kKey_Last
 };
 
 bool KeyPressed(int code);

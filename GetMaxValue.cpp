@@ -2,20 +2,20 @@
 
 byte GetMaxByteValue_C(byte *data, dword num)
 {
-  byte value = data[0];
-  for (dword i = 1; i < num; ++i)
-    if (data[i] > value)
-      value = data[i];
+	byte value = data[0];
+	for (dword i = 1; i < num; ++i)
+		if (data[i] > value)
+			value = data[i];
 
-  return value;
+	return value;
 }
 
 word GetMaxWordValue_C(word *data, dword num)
 {
-  word value = data[0];
-  for (dword i = 1; i < num; ++i)
-    if (data[i] > value)
-      value = data[i];
+	word value = data[0];
+	for (dword i = 1; i < num; ++i)
+		if (data[i] > value)
+			value = data[i];
 
-  return value;
+	return value;
 }
