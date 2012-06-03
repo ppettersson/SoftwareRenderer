@@ -3,6 +3,7 @@
 #include "CPU.h"
 #include "Timer.h"
 #include "Platform.h"
+#include "ThreadPoolWin32.h"
 #include <stdio.h>
 
 bool InitFrameBuffer(dword width, dword height);
@@ -10,42 +11,44 @@ void QuitFrameBuffer();
 
 bool Init(dword width, dword height)
 {
-  if (width <= 0 || height <= 0)
-    return false;
+	if (width <= 0 || height <= 0)
+		return false;
 
-  SetupDispatchTable();
+	SetupDispatchTable();
 
-  InitFrameBuffer(width, height);
-  InitScanConvert();
+	InitFrameBuffer(width, height);
+	InitScanConvert();
 
-  if (PlatformOpen(width, height))
-  {
-    InitTimer();
-    return true;
-  }
+	if (PlatformOpen(width, height))
+	{
+		InitTimer();
+		ThreadPool::GetInstance().Init();	// It's ok if this fails, everything will just run single-threaded instead.
+		return true;
+	}
 
-  return false;
+	return false;
 }
 
 bool PresentFrame()
 {
-  if (frameBuffer && PlatformUpdate(frameBuffer))
-  {
-    UpdateTimer();
+	if (frameBuffer && PlatformUpdate(frameBuffer))
+	{
+		UpdateTimer();
 
-    char msg[256];
-    sprintf_s(msg, 256, "SoftwareRenderer - [FPS = %d | %.1f]", GetFpsAverage(), GetFps());
-    PlatformSetWindowCaption(msg);
+		char msg[256];
+		sprintf_s(msg, 256, "SoftwareRenderer - [FPS = %d | %.1f]", GetFpsAverage(), GetFps());
+		PlatformSetWindowCaption(msg);
 
-    return true;
-  }
+		return true;
+	}
 
-  return false;
+	return false;
 }
 
 void Quit()
 {
-  QuitFrameBuffer();
-  QuitScanConvert();
-  PlatformClose();
+	ThreadPool::GetInstance().Destroy();
+	QuitFrameBuffer();
+	QuitScanConvert();
+	PlatformClose();
 }

@@ -121,6 +121,7 @@
     <ClCompile Include="StretchBlit.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TestSuite.cpp" />
+    <ClCompile Include="ThreadPoolWin32.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +132,7 @@
     <ClInclude Include="ScanConvert.h" />
     <ClInclude Include="SoftwareRenderer.h" />
     <ClInclude Include="TestSuite.h" />
+    <ClInclude Include="ThreadPoolWin32.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>

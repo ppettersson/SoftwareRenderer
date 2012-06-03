@@ -19,6 +19,9 @@
     <Filter Include="SoftwareRenderer\Platform">
       <UniqueIdentifier>{a9952852-5f13-4084-aaa2-6655ab808654}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SoftwareRenderer\Threading">
+      <UniqueIdentifier>{d5e35215-473b-4408-9771-1666c0ec39e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SoftwareRenderer.cpp">
@@ -83,6 +86,9 @@
     <ClCompile Include="GetMaxValue.cpp">
       <Filter>SoftwareRenderer\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="ThreadPoolWin32.cpp">
+      <Filter>SoftwareRenderer\Threading</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SoftwareRenderer.h">
@@ -106,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="Platform.h">
       <Filter>SoftwareRenderer\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadPoolWin32.h">
+      <Filter>SoftwareRenderer\Threading</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

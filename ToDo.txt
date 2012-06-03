@@ -1,13 +1,19 @@
+- Threading:
+	- Understand it fully: draw a flow chart on paper!
+	- Clean up and comment.
+	- Experiment and tweak for performance, what is a good job size (num scanlines) to minimize overhead?
+
 - Make Linux and Mac versions.
-  - Need to remove all inline asm first.
-  - Android / iOS versions?
+	- Need to remove all inline asm first.
+	- Android / iOS versions?
 
 - emms is problematic, it's only used for mmx, should we just take the hit and insert it where it's needed?
-  Then it'll hit extra hard for functions that split up processing per line etc.
+	Then it'll hit extra hard for functions that split up processing per line etc.
+	- Remove mmx support, set minimum to sse2 instead.
 
 - Go through the blend modes and verify that they are actually correct, seems to be some issues with some of them.
-  - Finish the mmx blend code: BlendLighten1, BlendDarken1, BlendScreen, BlendLighten, BlendDarken.
-  - Is it possible to do Max(/Min/Abs)?
+	- Finish the mmx blend code: BlendLighten1, BlendDarken1, BlendScreen, BlendLighten, BlendDarken.
+	- Is it possible to do Max(/Min/Abs)?
 
 - Study how msvcrt's memcpy align memory for sse2.
 - Remove pushad/popad, too slow and too many registers.
